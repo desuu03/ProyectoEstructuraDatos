@@ -96,26 +96,32 @@ public class GestorDeEntidad {
             for (String[] linea : lineas) {
                 ClaseEntidad instancia = claseEntidad.getDeclaredConstructor().newInstance();
 
-                for (Map.Entry<Integer, String> itemMapa : this.mapeoColumnas.entrySet()) {
+                //VALIDACION DE QUE SI ESTEN BIEN LOS FORMATOS
+                if(linea.length == claseEntidad.getDeclaredFields().length) {
 
-                    Field atributo = claseEntidad.getDeclaredField(itemMapa.getValue());
-                    atributo.setAccessible(true);
-                    String value = linea[itemMapa.getKey()];
+                    for (Map.Entry<Integer, String> itemMapa : this.mapeoColumnas.entrySet()) {
 
-                    if (atributo.getType().equals(Integer.class) || atributo.getType().equals(int.class)) {
-                        atributo.set(instancia, Integer.parseInt(value));
-                    } else if (atributo.getType().equals(Double.class) || atributo.getType().equals(double.class)) {
-                        atributo.set(instancia, Double.parseDouble(value));
-                    } else if (atributo.getType().equals(Boolean.class) || atributo.getType().equals(boolean.class)) {
-                        atributo.set(instancia, Boolean.parseBoolean(value));
-                    } else if (atributo.getType().equals(Long.class) || atributo.getType().equals(long.class)) {
-                        atributo.set(instancia, Long.parseLong(value));
-                    } else {
-                        atributo.set(instancia, value);
+                        Field atributo = claseEntidad.getDeclaredField(itemMapa.getValue());
+                        atributo.setAccessible(true);
+                        String value = linea[itemMapa.getKey()];
+
+                        if (atributo.getType().equals(Integer.class) || atributo.getType().equals(int.class)) {
+                            atributo.set(instancia, Integer.parseInt(value));
+                        } else if (atributo.getType().equals(Double.class) || atributo.getType().equals(double.class)) {
+                            atributo.set(instancia, Double.parseDouble(value));
+                        } else if (atributo.getType().equals(Boolean.class) || atributo.getType().equals(boolean.class)) {
+                            atributo.set(instancia, Boolean.parseBoolean(value));
+                        } else if (atributo.getType().equals(Long.class) || atributo.getType().equals(long.class)) {
+                            atributo.set(instancia, Long.parseLong(value));
+                        } else {
+                            atributo.set(instancia, value);
+                        }
                     }
-                }
 
-                entidades.add(instancia);
+                    entidades.add(instancia);
+                }else {
+                    throw new RuntimeException("Campos incompletos en el csv");
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

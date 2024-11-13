@@ -12,7 +12,6 @@ public abstract class ADao<ClaseEntidad, TipoId>
 
     @SuppressWarnings("unchecked")
     public ADao(String rutaArchivo) throws IOException {
-
         this.claseEntidad = (Class<ClaseEntidad>) (
                 (ParameterizedType) getClass().getGenericSuperclass()
         ).getActualTypeArguments()[0];

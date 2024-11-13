@@ -9,7 +9,7 @@ public class Caracterizado {
     public Caracterizado(){}
 
     public Caracterizado(String tipoDocumento, String documento,
-                         nombre, String caracterizacion) {
+                         String nombre, String caracterizacion) {
         this.tipoDocumento = tipoDocumento;
         this.documento = documento;
         this.nombre = nombre;

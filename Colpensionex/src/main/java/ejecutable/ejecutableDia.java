@@ -17,23 +17,44 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.nio.file.*;
+import java.util.PriorityQueue;
 import java.util.zip.*;
 
 public class ejecutableDia {
     public static void main(String[] args) throws IOException {
         HashMap<String, Persona> encoladosCache = encoladosCache();
-        HashMap<String, Caracterizado> caracterizadosFiscaliaCache = caracterizacionFiscaliaCache();
-        HashMap<String, Caracterizado> caraterizadosContraloriaCache = caracterizacionContraloriaCache();
-        HashMap<String, Caracterizado> caracterizadosProcaduriaCache = caracterizacionProcaduriaCache();
-        HashMap<String, Persona> cotizantesCache = cotizantesCache();
-        HashMap<String, Persona> inhabilitadosCache = inhabilitadosCache();
+        PriorityQueue<Persona> encolados = new PriorityQueue<>();
+        encolados.addAll(encoladosCache.values());
 
+        // Inicialización de personas
+//        Persona persona1 = new Persona("Juan Pérez", "1234567890", 35, "Masculino", "Bogotá", "Medellín", "asd", false, "Policía Nacional", true, true, false, "Ninguna", "Activo", true);
+//        Persona persona2 = new Persona("María García", "9876543210", 42, "Femenino", "Cali", "Bogotá", "dsa", true, "INPEC", false, false, true, "Advertencia", "Retirado", false);
+//        Persona persona3 = new Persona("Pedro Sánchez", "1122334455", 50, "Masculino", "Barranquilla", "Cartagena", "asd", false, "Ejército Nacional", true, true, false, "Ninguna", "Activo", true);
+//        Persona persona4 = new Persona("Laura Martínez", "5566778899", 28, "Femenino", "Bucaramanga", "Cúcuta", "false", false, "Fiscalía General", false, false, true, "Ninguna", "Activo", false);
+//        Persona persona5 = new Persona("Carlos Hernández", "2233445566", 45, "Masculino", "Santa Marta", "Medellín", "true", false, "Policía Nacional", true, true, false, "Ninguna", "Activo", true);
+//        Persona persona6 = new Persona("Andrea Gómez", "7788990011", 32, "Femenino", "Pereira", "Manizales", "less", false, "Defensoría del Pueblo", false, false, false, "Advertencia", "Activo", false);
+//        Persona persona7 = new Persona("Javier Rodríguez", "1122558899", 39, "Masculino", "Cali", "Palmira", "more", false, "Ejército Nacional", true, true, false, "Ninguna", "Activo", true);
+//        Persona persona8 = new Persona("Claudia Ramírez", "3344556677", 53, "Femenino", "Neiva", "Ibagué", "catch", true, "INPEC", false, false, true, "Ninguna", "Retirado", false);
+//        Persona persona9 = new Persona("Luis Fernández", "9988776655", 41, "Masculino", "Medellín", "Bogotá", "try", false, "Policía Nacional", true, true, false, "Advertencia", "Activo", true);
+//        Persona persona10 = new Persona("Sofía Méndez", "5566443322", 29, "Femenino", "Cartagena", "Barranquilla", "nose", false, "Fiscalía General", false, false, true, "Ninguna", "Activo",false);
+//        encolados.addAll(List.of(new Persona[]{persona1, persona2, persona3,persona4,persona5
+//                                                ,persona6,persona7,persona8,persona9,persona10}));
+       procesarEncolados(encolados);
+    }
 
+    private static void procesarEncolados(PriorityQueue<Persona> encolados){
+        int aceptados =0;
+        while(encolados.size()!=0 && aceptados!=100){
+            Persona personaAux = encolados.poll();
+
+            System.out.println(personaAux.getNombre()+", edad > "+personaAux.getEdad()+", declararRenta > "+personaAux.isObligadoDeclararRenta());
+            aceptados++;
+        }
     }
 
     public static HashMap<String, Persona> encoladosCache () throws IOException {
         // Cargar encolados
-        PersonaDao encoladosDao = new PersonaDao("recursos/encolados");
+        PersonaDao encoladosDao = new PersonaDao("src/main/java/recursos/encolados");
         List<Persona> encolados = encoladosDao.obtenerTodos();
         HashMap<String, Persona> encoladosCache = new HashMap<>();
         for (Persona encolado : encolados){
@@ -41,57 +62,10 @@ public class ejecutableDia {
         }
         return encoladosCache;
     }
-    public static HashMap<String, Caracterizado> caracterizacionFiscaliaCache () throws IOException {
-        // Cargar caracterizados por fiscalia
-        CaracterizadoDao caracterizadoDao = new CaracterizadoDao("recursos/CaracterizacionesEnProceso/fiscalia");
-        List<Caracterizado> caracterizados = caracterizadoDao.obtenerTodos();
-        HashMap<String, Caracterizado> caracterizadosCache = new HashMap<>();
-        for (Caracterizado caracterizado : caracterizados){
-            caracterizadosCache.put(caracterizado.getDocumento(),caracterizado);
-        }
-        return caracterizadosCache;
-    } public static HashMap<String, Caracterizado> caracterizacionProcaduriaCache () throws IOException {
-        // Cargar caracterizados por procaduria
-        CaracterizadoDao caracterizadoDao = new CaracterizadoDao("recursos/CaracterizacionesEnProceso/procaduria");
-        List<Caracterizado> caracterizados = caracterizadoDao.obtenerTodos();
-        HashMap<String, Caracterizado> caracterizadosCache = new HashMap<>();
-        for (Caracterizado caracterizado : caracterizados){
-            caracterizadosCache.put(caracterizado.getDocumento(),caracterizado);
-        }
-        return caracterizadosCache;
-    } public static HashMap<String, Caracterizado> caracterizacionContraloriaCache () throws IOException {
-        // Cargar caracterizados por contraloria
-        CaracterizadoDao caracterizadoDao = new CaracterizadoDao("recursos/CaracterizacionesEnProceso/contraloria");
-        List<Caracterizado> caracterizados = caracterizadoDao.obtenerTodos();
-        HashMap<String, Caracterizado> caracterizadosCache = new HashMap<>();
-        for (Caracterizado caracterizado : caracterizados){
-            caracterizadosCache.put(caracterizado.getDocumento(),caracterizado);
-        }
-        return caracterizadosCache;
-    } public static HashMap<String, Persona> cotizantesCache () throws IOException {
-        // Cargar cotizantes
-        PersonaDao cotizantesDao = new PersonaDao("empleado/Base de datos/cotizantes");
-        List<Persona> cotizantes = cotizantesDao.obtenerTodos();
-        HashMap<String, Persona> cotizantesCache = new HashMap<>();
-        for (Persona cotizante : cotizantes){
-            cotizantesCache.put(cotizante.getCedula(),cotizante);
-        }
-        return cotizantesCache;
-    }
-    public static HashMap<String, Persona> inhabilitadosCache () throws IOException {
-        // Cargan encolados
-        PersonaDao inhabilitadosDao = new PersonaDao("empleado/Base de datos/inhabilitados");
-        List<Persona> inhabilitados = inhabilitadosDao.obtenerTodos();
-        HashMap<String, Persona> inhabilitadosCache = new HashMap<>();
-        for (Persona inhabilitado : inhabilitados){
-            inhabilitadosCache.put(inhabilitado.getCedula(),inhabilitado);
-        }
-        return inhabilitadosCache;
-    }
 
     public static void moverCaracterizaciones(){
         Path carpetaOrigen = Paths.get("empleado/Caracterizaciones Entrantes");
-        Path carpetaDestino = Paths.get("recursos/CaracterizacionesEnProceso");
+        Path carpetaDestino = Paths.get("src/main/java/recursos/CaracterizacionesEnProceso");
 
         try {
             // Obtener todos los archivos de la carpeta de origen
@@ -178,5 +152,8 @@ public class ejecutableDia {
         return anio+"_"+mes+"_"+dia;
     }
 
+    private static void crearCarpetaDia(){
+        Path direccionCarpeta = Paths.get("empleado/Diario/SolicitudesProcesadas_"+fechaActual());
+    }
 
 }

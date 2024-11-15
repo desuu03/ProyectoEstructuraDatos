@@ -1,5 +1,5 @@
 package model;
-public class Persona{
+public class Persona implements Comparable<Persona>{
     private String nombre;
     private String cedula;
     private int edad;
@@ -15,12 +15,13 @@ public class Persona{
     private String observacionesDisciplinarias;
     private String estado; //RECHAZADO APROBADO INHABILITADO EMBARGADO
 
+    private boolean obligadoDeclararRenta;
     public Persona(){}
     public Persona(String nombre, String cedula, int edad, String genero,
                    String lugarNacimiento, String lugarResidencia, String institucionPublica,
                    boolean prepensionado, String entidadAnterior, boolean hijosINPEC,
                    boolean condecorado, boolean familiaresPolicias,
-                   String observacionesDisciplinarias, String estado) {
+                   String observacionesDisciplinarias, String estado, boolean obligadoDeclararRenta) {
         this.nombre = nombre;
         this.cedula = cedula;
         this.edad = edad;
@@ -35,6 +36,15 @@ public class Persona{
         this.familiaresPolicias = familiaresPolicias;
         this.observacionesDisciplinarias = observacionesDisciplinarias;
         this.estado=estado;
+        this.obligadoDeclararRenta=obligadoDeclararRenta;
+    }
+
+    public boolean isObligadoDeclararRenta() {
+        return obligadoDeclararRenta;
+    }
+
+    public void setObligadoDeclararRenta(boolean obligadoDeclararRenta) {
+        this.obligadoDeclararRenta = obligadoDeclararRenta;
     }
 
     public String getNombre() {
@@ -147,5 +157,18 @@ public class Persona{
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    @Override
+    public int compareTo(Persona o) {
+        if(Boolean.compare(this.getEdad()<35,o.getEdad()<35)>0){
+            return -1;
+        }
+        if(Boolean.compare(!this.isObligadoDeclararRenta(),!o.isObligadoDeclararRenta())>0){
+            return 0;
+        }
+       return 1;
+
+
     }
 }

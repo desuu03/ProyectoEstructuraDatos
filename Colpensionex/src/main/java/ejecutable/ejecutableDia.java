@@ -4,6 +4,7 @@ import CSV.CaracterizadoDao;
 import CSV.PersonaDao;
 import model.Caracterizado;
 import model.Persona;
+import util.EscritorArchivosUtil;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -13,11 +14,8 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.nio.file.*;
-import java.util.PriorityQueue;
 import java.util.zip.*;
 
 public class ejecutableDia {
@@ -42,14 +40,18 @@ public class ejecutableDia {
        procesarEncolados(encolados);
     }
 
-    private static void procesarEncolados(PriorityQueue<Persona> encolados){
+    private static void procesarEncolados(PriorityQueue<Persona> encolados) throws IOException {
+        LinkedList<Persona> encoladosProcesadosDia = new LinkedList<>();
+
         int aceptados =0;
         while(encolados.size()!=0 && aceptados!=100){
             Persona personaAux = encolados.poll();
-
-            System.out.println(personaAux.getNombre()+", edad > "+personaAux.getEdad()+", declararRenta > "+personaAux.isObligadoDeclararRenta());
+            encoladosProcesadosDia.add(personaAux);
+            EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Cotizantes.csv",personaAux);
+            //System.out.println(personaAux.getNombre()+", edad > "+personaAux.getEdad()+", declararRenta > "+personaAux.isObligadoDeclararRenta());
             aceptados++;
         }
+        EscritorArchivosUtil.nuevoCSV("empleado/Diario","SolicitantesProcesados_"+fechaActual(), encoladosProcesadosDia);
     }
 
     public static HashMap<String, Persona> encoladosCache () throws IOException {

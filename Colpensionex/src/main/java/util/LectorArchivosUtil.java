@@ -3,6 +3,7 @@ package util;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
+import java.util.List;
 
 public class LectorArchivosUtil {
 
@@ -58,4 +59,7 @@ public class LectorArchivosUtil {
 
         return lineas;
     }
+
+
+
 }

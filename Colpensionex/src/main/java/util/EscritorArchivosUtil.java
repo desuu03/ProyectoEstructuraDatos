@@ -14,7 +14,12 @@ public class EscritorArchivosUtil {
     public static void escribirPersona(String rutaArchivo, Persona persona)
             throws IOException
     {
+        File direccio = new File(rutaArchivo);
+        if (!direccio.exists()){
+            direccio.createNewFile();
+        }
         try(BufferedWriter escritor = new BufferedWriter(new FileWriter(rutaArchivo, true))
+
         ) {
             String personaCSV = persona.getNombre()+";;"+persona.getCedula()+";;"+persona.getEdad()+";;"
                                 +persona.getGenero()+";;"+persona.getLugarNacimiento()+";;"+persona.getLugarResidencia()+";;"
@@ -25,7 +30,7 @@ public class EscritorArchivosUtil {
             escritor.write(personaCSV);
             escritor.newLine();
         }catch (IOException e){
-            e.printStackTrace();
+
         }
 
     }
@@ -55,10 +60,98 @@ public class EscritorArchivosUtil {
     }
 
     public static void escribirTodasPersonas(LinkedList<Persona> personas, String rutaArchivo) throws IOException {
-        for(Persona persona : personas){
-            escribirPersona(rutaArchivo,persona);
+        for (Persona persona : personas) {
+            escribirPersona(rutaArchivo, persona);
         }
     }
+
+    public static void modificarLineaCsv(String archivoCsv, String idBuscar, String nuevoValor, int atributo) throws IOException {
+        File archivo = new File(archivoCsv);
+        File tempArchivo = new File("temp_" + archivoCsv); // Archivo temporal
+
+        BufferedReader lector = new BufferedReader(new FileReader(archivo));
+        BufferedWriter escritor = new BufferedWriter(new FileWriter(tempArchivo));
+
+        String linea;
+        boolean encontrado = false;
+
+        while ((linea = lector.readLine()) != null) {
+            String[] columnas = linea.split(";;"); // Asumiendo que el archivo CSV está separado por comas
+
+            // Suponiendo que el ID es la primera columna
+            if (columnas[0].equals(idBuscar)) {
+                columnas[atributo] = nuevoValor; // Modificar el atributo en la posicion (o en la columna correspondiente)
+                linea = String.join(";;", columnas); // Reunimos las columnas de nuevo en una línea
+                encontrado = true;
+            }
+
+            escritor.write(linea);
+            escritor.newLine();
+        }
+
+        lector.close();
+        escritor.close();
+
+        // Si no se encontró el ID, se puede manejar el caso si es necesario
+        if (!encontrado) {
+            System.out.println("No se encontró el ID especificado.");
+        }
+
+        // Si la modificación fue exitosa, reemplazar el archivo original por el archivo temporal
+        if (archivo.delete()) {
+            if (tempArchivo.renameTo(archivo)) {
+                System.out.println("Archivo CSV modificado exitosamente.");
+            } else {
+                System.out.println("No se pudo renombrar el archivo temporal.");
+            }
+        } else {
+            System.out.println("No se pudo eliminar el archivo original.");
+        }
+    }
+
+    public static void borrarLineaCSV(String archivoCsv, String idBuscar) throws IOException {
+        File archivo = new File(archivoCsv);
+        File tempArchivo = new File("temp_" + archivoCsv); // Archivo temporal
+
+        BufferedReader lector = new BufferedReader(new FileReader(archivo));
+        BufferedWriter escritor = new BufferedWriter(new FileWriter(tempArchivo));
+
+        String linea;
+        boolean encontrado = false;
+
+        while ((linea = lector.readLine()) != null) {
+            String[] columnas = linea.split(";;"); // Asumiendo que el archivo CSV está separado por comas
+
+            // Suponiendo que el ID es la primera columna
+            if (columnas[0].equals(idBuscar)) {
+                encontrado=true;
+                continue;
+            }
+            escritor.write(linea);
+            escritor.newLine();
+        }
+
+        lector.close();
+        escritor.close();
+
+        // Si no se encontró el ID, se puede manejar el caso si es necesario
+        if (!encontrado) {
+            System.out.println("No se encontró el ID a eliminar.");
+        }
+
+        // Si la modificación fue exitosa, reemplazar el archivo original por el archivo temporal
+        if (archivo.delete()) {
+            if (tempArchivo.renameTo(archivo)) {
+                System.out.println("Archivo CSV modificado exitosamente.");
+            } else {
+                System.out.println("No se pudo renombrar el archivo temporal.");
+            }
+        } else {
+            System.out.println("No se pudo eliminar el archivo original.");
+        }
+    }
+
+
 
 
 }

@@ -14,6 +14,7 @@ public class Persona implements Comparable<Persona>{
     private boolean familiaresPolicias;
     private String observacionesDisciplinarias;
     private String estado; //RECHAZADO APROBADO INHABILITADO EMBARGADO
+    private String fechaModifacion;
 
     private boolean obligadoDeclararRenta;
     public Persona(){}
@@ -21,7 +22,8 @@ public class Persona implements Comparable<Persona>{
                    String lugarNacimiento, String lugarResidencia, String institucionPublica,
                    boolean prepensionado, String entidadAnterior, boolean hijosINPEC,
                    boolean condecorado, boolean familiaresPolicias,
-                   String observacionesDisciplinarias, String estado, boolean obligadoDeclararRenta) {
+                   String observacionesDisciplinarias, String estado, boolean obligadoDeclararRenta,
+                   String fechaModifacion) {
         this.nombre = nombre;
         this.cedula = cedula;
         this.edad = edad;
@@ -37,6 +39,7 @@ public class Persona implements Comparable<Persona>{
         this.observacionesDisciplinarias = observacionesDisciplinarias;
         this.estado=estado;
         this.obligadoDeclararRenta=obligadoDeclararRenta;
+        this.fechaModifacion = fechaModifacion;
     }
 
     public boolean isObligadoDeclararRenta() {
@@ -45,6 +48,14 @@ public class Persona implements Comparable<Persona>{
 
     public void setObligadoDeclararRenta(boolean obligadoDeclararRenta) {
         this.obligadoDeclararRenta = obligadoDeclararRenta;
+    }
+
+    public String getFechaModifacion() {
+        return fechaModifacion;
+    }
+
+    public void setFechaModifacion(String fechaModifacion) {
+        this.fechaModifacion = fechaModifacion;
     }
 
     public String getNombre() {

@@ -5,6 +5,7 @@ import CSV.PersonaDao;
 import model.Caracterizado;
 import model.Persona;
 import util.EscritorArchivosUtil;
+import util.Fecha;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -20,9 +21,9 @@ import java.util.zip.*;
 
 public class ejecutableDia {
     public static void main(String[] args) throws IOException {
-        HashMap<String, Persona> encoladosCache = encoladosCache();
-        PriorityQueue<Persona> encolados = new PriorityQueue<>();
-        encolados.addAll(encoladosCache.values());
+       HashMap<String, Persona> encoladosCache = encoladosCache();
+       PriorityQueue<Persona> encolados = new PriorityQueue<>();
+       encolados.addAll(encoladosCache.values());
 
         // Inicialización de personas
 //        Persona persona1 = new Persona("Juan Pérez", "1234567890", 35, "Masculino", "Bogotá", "Medellín", "asd", false, "Policía Nacional", true, true, false, "Ninguna", "Activo", true);
@@ -46,12 +47,14 @@ public class ejecutableDia {
         int aceptados =0;
         while(encolados.size()!=0 && aceptados!=100){
             Persona personaAux = encolados.poll();
+            personaAux.setEstado("Aceptado");
+            personaAux.setFechaModifacion(Fecha.fechaActual());
             encoladosProcesadosDia.add(personaAux);
             EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Cotizantes.csv",personaAux);
             //System.out.println(personaAux.getNombre()+", edad > "+personaAux.getEdad()+", declararRenta > "+personaAux.isObligadoDeclararRenta());
             aceptados++;
         }
-        EscritorArchivosUtil.nuevoCSV("empleado/Diario","SolicitantesProcesados_"+fechaActual(), encoladosProcesadosDia);
+        EscritorArchivosUtil.nuevoCSV("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual(),"SolicitantesAceptados_"+Fecha.fechaActual(), encoladosProcesadosDia);
     }
 
     public static HashMap<String, Persona> encoladosCache () throws IOException {
@@ -89,8 +92,8 @@ public class ejecutableDia {
     }
 
     public static void comprimirCarpeta (){
-        Path carpetaOrigen = Paths.get("empleado/Diario/SolicitudesProcesadas_"+fechaDiaAnterior());
-        Path carpetaZip = Paths.get("empleado/Diario/SolicitudesProcesadas_"+fechaDiaAnterior()+".zip");
+        Path carpetaOrigen = Paths.get("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaDiaAnterior());
+        Path carpetaZip = Paths.get("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaDiaAnterior()+".zip");
 
         try {
             // Crear un flujo de salida para el archivo ZIP
@@ -138,24 +141,9 @@ public class ejecutableDia {
         }
     }
 
-    private static String fechaActual(){
-        LocalDate localDate = LocalDate.now();
-        int anio = localDate.getYear();
-        int mes = localDate.getMonthValue();
-        int dia = localDate.getDayOfMonth();
-        return anio+"_"+mes+"_"+dia;
-    }
-    private static String fechaDiaAnterior(){
-        LocalDate localDate = LocalDate.now();
-        localDate.minusDays(1);
-        int anio = localDate.getYear();
-        int mes = localDate.getMonthValue();
-        int dia = localDate.getDayOfMonth();
-        return anio+"_"+mes+"_"+dia;
-    }
 
     private static void crearCarpetaDia(){
-        Path direccionCarpeta = Paths.get("empleado/Diario/SolicitudesProcesadas_"+fechaActual());
+        Path direccionCarpeta = Paths.get("empleado/Diario/SolicitudesProcesadas_"+ Fecha.fechaActual());
     }
 
 }

@@ -71,7 +71,7 @@ public class ejecutableHora {
     }
     private static HashMap<String, Persona> cotizantesCache () throws IOException {
         // Cargar cotizantes
-        PersonaDao cotizantesDao = new PersonaDao("empleado/Base de datos/cotizantes");
+        PersonaDao cotizantesDao = new PersonaDao("empleado/Base de datos/Cotizantes");
         List<Persona> cotizantes = cotizantesDao.obtenerTodos();
         HashMap<String, Persona> cotizantesCache = new HashMap<>();
         for (Persona cotizante : cotizantes){
@@ -82,7 +82,7 @@ public class ejecutableHora {
 
     private static HashMap<String, Persona> inhabilitadosCache () throws IOException {
         // Cargan encolados
-        PersonaDao inhabilitadosDao = new PersonaDao("empleado/Base de datos/inhabilitados");
+        PersonaDao inhabilitadosDao = new PersonaDao("empleado/Base de datos/Inhabilitados");
         List<Persona> inhabilitados = inhabilitadosDao.obtenerTodos();
         HashMap<String, Persona> inhabilitadosCache = new HashMap<>();
         for (Persona inhabilitado : inhabilitados){
@@ -144,21 +144,144 @@ public class ejecutableHora {
         }
     }
 
-    public static void procesarPorCaracterizacion (Persona solicitante){
-
+    public static void procesarPorCaracterizacion (Persona solicitante) throws IOException {
+        if(caracterizadosFiscaliaCache.containsKey(solicitante.getCedula())){
+            String tipoCaracterizacio = caracterizadosFiscaliaCache.get(solicitante.getCedula()).getCaracterizacion();
+            if(tipoCaracterizacio.equals("INHABILITAR")){
+                solicitante.setEstado("Inhabilitado");
+                solicitante.setFechaModifacion(Fecha.fechaActual());
+                EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Inhabilitados",solicitante);
+                EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Inhabilitados",solicitante);
+            }
+            if(tipoCaracterizacio.equals("EMBARGAR")){
+                solicitante.setEstado("Embargado");
+                EscritorArchivosUtil.escribirPersona("src/main/java/recursos/encolados", solicitante);
+                EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Embargados",solicitante);
+                EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Embargados",solicitante);
+            }
+        }
+        if(caracterizadosProcaduriaCache.containsKey(solicitante.getCedula())){
+            String tipoCaracterizacio = caracterizadosProcaduriaCache.get(solicitante.getCedula()).getCaracterizacion();
+            if(tipoCaracterizacio.equals("INHABILITAR")){
+                solicitante.setEstado("Inhabilitado");
+                solicitante.setFechaModifacion(Fecha.fechaActual());
+                EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Inhabilitados",solicitante);
+                EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Inhabilitados",solicitante);
+            }
+            if(tipoCaracterizacio.equals("EMBARGAR")){
+                solicitante.setEstado("Embargado");
+                EscritorArchivosUtil.escribirPersona("src/main/java/recursos/encolados", solicitante);
+                EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Embargados",solicitante);
+                EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Embargados",solicitante);
+            }
+        }
+        if(caracterizacionContraloriaCache().containsKey(solicitante.getCedula())){
+            String tipoCaracterizacio = caracterizacionContraloriaCache().get(solicitante.getCedula()).getCaracterizacion();
+            if(tipoCaracterizacio.equals("INHABILITAR")){
+                solicitante.setEstado("Inhabilitado");
+                solicitante.setFechaModifacion(Fecha.fechaActual());
+                EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Inhabilitados",solicitante);
+                EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Inhabilitados",solicitante);
+            }
+            if(tipoCaracterizacio.equals("EMBARGAR")){
+                solicitante.setEstado("Embargado");
+                EscritorArchivosUtil.escribirPersona("src/main/java/recursos/encolados", solicitante);
+                EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Embargados",solicitante);
+                EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Embargados",solicitante);
+            }
+        }
     }
 
-    private static boolean procesarSolicitante(Persona solicitante) throws IOException {
-        if(inhabilitadosCache.containsKey(solicitante.getCedula())){
+    private static boolean procesarPorColpensionex(Persona solicitante) throws IOException {
+        String cedulaSolicitante = solicitante.getCedula();
+        if(cotizantesCache().containsKey(cedulaSolicitante)){
+            return false;
+        }
+        if(inhabilitadosCache.containsKey(cedulaSolicitante)){
             DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy_MM_dd");
             LocalDate fecha = LocalDate.parse(solicitante.getFechaModifacion(),formato);
             if(fecha.plusMonths(6).isBefore(LocalDate.now())){
                 inhabilitadosCache.remove(solicitante.getCedula());
                 EscritorArchivosUtil.borrarLineaCSV("empleado/Base de datos/Inhabilitados", solicitante.getCedula());
                 solicitante.setFechaModifacion(Fecha.fechaActual());
-                return procesarSolicitante(solicitante);
+                return procesarPorColpensionex(solicitante);
             }
         }
+        if(solicitante.isPrepensionado()){
+            return false;
+        }
+        String institucionPublica = solicitante.getInstitucionPublica();
+        if(institucionPublica.equals("Civil")){
+            String [] lugarNacimiento = solicitante.getLugarNacimiento().split("-");
+            String [] lugarResidencia = solicitante.getLugarResidencia().split("-");
+            if(lugarNacimiento[2].equalsIgnoreCase("Bogota") && lugarResidencia[2].equalsIgnoreCase("Bogota")){
+                return false;
+            }
+            if(lugarNacimiento[2].equalsIgnoreCase("Medellin") && lugarResidencia[2].equalsIgnoreCase("Medellin")){
+                return false;
+            }
+            if(lugarNacimiento[2].equalsIgnoreCase("Cali") && lugarResidencia[2].equalsIgnoreCase("Cali")){
+                return false;
+            }
+            if(lugarNacimiento[0].contains("tan") || lugarNacimiento[1].contains("tan") || lugarNacimiento[2].contains("tan")){
+                return false;
+            }
+            //validacion para ver si alcanza edad para aplicar regimen de prima media que es a la edad de
+            if(solicitante.getGenero().equalsIgnoreCase("Femenino") && solicitante.getEdad()>57){
+                return false;
+            }
+            if(solicitante.getGenero().equalsIgnoreCase("Masculino") && solicitante.getEdad()>62){
+                return false;
+            }
+            String entidadAnterior = solicitante.getEntidadAnterior();
+            if(entidadAnterior.equalsIgnoreCase("Provenir")){
+
+            }
+            if(entidadAnterior.equalsIgnoreCase("Proteccion")){
+
+            }
+            if(entidadAnterior.equalsIgnoreCase("Colfondos")){
+
+            }
+            if(entidadAnterior.equalsIgnoreCase("Old Mutual")){
+
+            }
+            return true;
+
+        }else{
+            if(institucionPublica.equalsIgnoreCase("Armada")){
+                if(solicitante.isCondecorado()){
+                    return true;
+                }
+                solicitante.setInstitucionPublica("Civil");
+                return procesarPorColpensionex(solicitante);
+            }
+            if(institucionPublica.equalsIgnoreCase("Inpec")){
+                if(solicitante.isHijosINPEC()){
+                    return true;
+                }
+                solicitante.setInstitucionPublica("Civil");
+                return procesarPorColpensionex(solicitante);
+            }
+            if(institucionPublica.equalsIgnoreCase("Policia")){
+                if(solicitante.isFamiliaresPolicias() && solicitante.getEdad()>18){
+                    return true;
+                }
+                solicitante.setInstitucionPublica("Civil");
+                return procesarPorColpensionex(solicitante);
+            }
+            if(institucionPublica.equalsIgnoreCase("Minsalud")){
+                if(solicitante.getObservacionesDisciplinarias().equalsIgnoreCase("Ninguna")){
+                    return true;
+                }
+
+            }
+            if(institucionPublica.equalsIgnoreCase("Mininterior")){
+
+            }
+        }
+
+
       return false;
     }
 

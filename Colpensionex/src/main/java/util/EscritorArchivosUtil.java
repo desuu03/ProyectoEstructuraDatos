@@ -5,6 +5,7 @@ import model.Persona;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -16,7 +17,8 @@ public class EscritorArchivosUtil {
     {
         File direccio = new File(rutaArchivo);
         if (!direccio.exists()){
-            direccio.createNewFile();
+            String [] direcciones =rutaArchivo.split("/");
+            nuevoCSV(rutaArchivo, direcciones[direcciones.length-1], persona.getClass());
         }
         try(BufferedWriter escritor = new BufferedWriter(new FileWriter(rutaArchivo, true))
 
@@ -35,8 +37,8 @@ public class EscritorArchivosUtil {
 
     }
 
-    public static void nuevoCSV(String ruta, String nombreArchivo, LinkedList<Persona> personas) throws IOException {
-        Field[] atributos = personas.getClass().getDeclaredFields();
+    public static void nuevoCSV(String ruta, String nombreArchivo, Class persona) throws IOException {
+        Field[] atributos = persona.getDeclaredFields();
         String atributosCSV =atributos[0]+"";
         for (int i=1; i< atributos.length;i++){
             atributosCSV = atributosCSV+";;"+atributos[i];
@@ -55,8 +57,6 @@ public class EscritorArchivosUtil {
             System.out.println("Ocurrió un error.");
             e.printStackTrace();
         }
-
-        escribirTodasPersonas(personas, ruta+"/"+nombreArchivo);
     }
 
     public static void escribirTodasPersonas(LinkedList<Persona> personas, String rutaArchivo) throws IOException {

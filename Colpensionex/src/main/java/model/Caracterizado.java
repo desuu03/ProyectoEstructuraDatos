@@ -4,7 +4,7 @@ public class Caracterizado {
     private String tipoDocumento;
     private String documento;
     private String nombre;
-    private String caracterizacion; // INHABILITAR o EMBARGAR prueba
+    private String caracterizacion; // INHABILITAR o EMBARGAR
 
     public Caracterizado(){}
 

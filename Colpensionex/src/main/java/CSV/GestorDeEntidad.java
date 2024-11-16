@@ -97,7 +97,7 @@ public class GestorDeEntidad {
                 ClaseEntidad instancia = claseEntidad.getDeclaredConstructor().newInstance();
 
                 //VALIDACION DE QUE SI ESTEN BIEN LOS FORMATOS
-                if(linea.length == claseEntidad.getDeclaredFields().length) {
+
 
                     //
                     for (Map.Entry<Integer, String> itemMapa : this.mapeoColumnas.entrySet()) {
@@ -120,9 +120,7 @@ public class GestorDeEntidad {
                     }
 
                     entidades.add(instancia);
-                }else {
-                    throw new RuntimeException("Campos incompletos en el csv");
-                }
+
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

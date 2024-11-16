@@ -40,19 +40,22 @@ public class EscritorArchivosUtil {
 
     public static void nuevoCSV(String ruta, String nombreArchivo, Class persona) throws IOException {
         Field[] atributos = persona.getDeclaredFields();
-        String atributosCSV =atributos[0].getName()+"";
+        String atributosCSV =atributos[0].getName();
         for (int i=1; i< atributos.length;i++){
             atributosCSV = atributosCSV+";;"+atributos[i].getName();
         }
-        System.out.println(atributosCSV);
+
         File archivo = new File(ruta, nombreArchivo);
         try { // Crea los directorios si no existen
             archivo.getParentFile().mkdirs();
             // Crea el archivo
             archivo.createNewFile();
             // Escribe en el archivo
-            FileWriter escritor = new FileWriter(archivo);
+            FileWriter escritor = new FileWriter(archivo);;
             escritor.write(atributosCSV);
+            BufferedWriter writer = new BufferedWriter(escritor);
+            writer.newLine();
+            writer.close();
             escritor.close();
         } catch (IOException e) {
             System.out.println("Ocurrió un error.");

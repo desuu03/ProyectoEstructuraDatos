@@ -9,6 +9,8 @@ public class Persona implements Comparable<Persona>{
     private String institucionPublica; // si no es CIVIL
     private boolean prepensionado;
     private String entidadAnterior;
+
+    private int semanasEntidadEnterior;
     private boolean hijosINPEC;
     private boolean condecorado;
     private boolean familiaresPolicias;
@@ -18,12 +20,12 @@ public class Persona implements Comparable<Persona>{
 
     private boolean obligadoDeclararRenta;
     public Persona(){}
-    public Persona(String nombre, String cedula, int edad, String genero,
-                   String lugarNacimiento, String lugarResidencia, String institucionPublica,
-                   boolean prepensionado, String entidadAnterior, boolean hijosINPEC,
-                   boolean condecorado, boolean familiaresPolicias,
-                   String observacionesDisciplinarias, String estado, boolean obligadoDeclararRenta,
-                   String fechaModifacion) {
+
+    public Persona(String nombre, String cedula, int edad, String genero, String lugarNacimiento,
+                   String lugarResidencia, String institucionPublica, boolean prepensionado,
+                   String entidadAnterior, int semanasEntidadEnterior, boolean hijosINPEC,
+                   boolean condecorado, boolean familiaresPolicias, String observacionesDisciplinarias,
+                   String estado, String fechaModifacion, boolean obligadoDeclararRenta) {
         this.nombre = nombre;
         this.cedula = cedula;
         this.edad = edad;
@@ -33,13 +35,22 @@ public class Persona implements Comparable<Persona>{
         this.institucionPublica = institucionPublica;
         this.prepensionado = prepensionado;
         this.entidadAnterior = entidadAnterior;
+        this.semanasEntidadEnterior = semanasEntidadEnterior;
         this.hijosINPEC = hijosINPEC;
         this.condecorado = condecorado;
         this.familiaresPolicias = familiaresPolicias;
         this.observacionesDisciplinarias = observacionesDisciplinarias;
-        this.estado=estado;
-        this.obligadoDeclararRenta=obligadoDeclararRenta;
+        this.estado = estado;
         this.fechaModifacion = fechaModifacion;
+        this.obligadoDeclararRenta = obligadoDeclararRenta;
+    }
+
+    public int getSemanasEntidadEnterior(){
+        return this.semanasEntidadEnterior;
+    }
+
+    public void setSemanasEntidadEnterior(int semanas){
+        this.semanasEntidadEnterior =semanas;
     }
 
     public boolean isObligadoDeclararRenta() {

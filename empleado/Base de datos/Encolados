@@ -1,0 +1,11 @@
+nombre;;cedula;;edad;;genero;;lugarNacimiento;;lugarResidencia;;institucionPublica;;prepensionado;;entidadAnterior;;semanasEntidadEnterior;;hijosINPEC;;condecorado;;familiaresPolicias;;observacionesDisciplinarias;;estado;;fechaModifacion;;obligadoDeclararRenta
+Juan Pérez;;1234567890;;35;;Masculino;;Bogotá;;Medellín;;Policía Nacional;;false;;Ejército Nacional;;100;;true;;true;;false;;Ninguna;;Activo;;2024_11_16;;true
+María García;;9876543210;;42;;Femenino;;Cali;;Bogotá;;INPEC;;true;;INPEC;;120;;false;;false;;true;;Advertencia;;Retirado;;2024_11_16;;false
+Pedro Sánchez;;1122334455;;50;;Masculino;;Barranquilla;;Cartagena;;Ejército Nacional;;false;;Ejército Nacional;;150;;true;;true;;false;;Ninguna;;Activo;;2024_11_16;;true
+Laura Martínez;;5566778899;;28;;Femenino;;Bucaramanga;;Cúcuta;;Fiscalía General;;false;;Fiscalía General;;80;;false;;false;;true;;Ninguna;;Activo;;2024_11_16;;false
+Carlos Hernández;;2233445566;;45;;Masculino;;Santa Marta;;Medellín;;Policía Nacional;;false;;Policía Nacional;;200;;true;;true;;false;;Ninguna;;Activo;;2024_11_16;;true
+Andrea Gómez;;7788990011;;32;;Femenino;;Pereira;;Manizales;;Defensoría del Pueblo;;false;;Defensoría del Pueblo;;90;;false;;false;;false;;Advertencia;;Activo;;2024_11_16;;false
+Javier Rodríguez;;1122558899;;39;;Masculino;;Cali;;Palmira;;Ejército Nacional;;false;;Ejército Nacional;;110;;true;;true;;false;;Ninguna;;Activo;;2024_11_16;;true
+Claudia Ramírez;;3344556677;;53;;Femenino;;Neiva;;Ibagué;;INPEC;;true;;INPEC;;130;;false;;false;;true;;Ninguna;;Retirado;;2024_11_16;;false
+Luis Fernández;;9988776655;;41;;Masculino;;Medellín;;Bogotá;;Policía Nacional;;false;;Policía Nacional;;170;;true;;true;;false;;Advertencia;;Activo;;2024_11_16;;true
+Sofía Méndez;;5566443322;;29;;Femenino;;Cartagena;;Barranquilla;;Fiscalía General;;false;;Fiscalía General;;95;;false;;false;;true;;Ninguna;;Activo;;2024_11_16;;false

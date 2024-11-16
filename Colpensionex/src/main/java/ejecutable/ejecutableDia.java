@@ -22,23 +22,24 @@ import java.util.zip.*;
 
 public class ejecutableDia {
     public static void main(String[] args) throws IOException {
-       //HashMap<String, Persona> encoladosCache = encoladosCache();
+      HashMap<String, Persona> encoladosCache = encoladosCache();
        PriorityQueue<Persona> encolados = new PriorityQueue<>();
-       //encolados.addAll(encoladosCache.values());
+      encolados.addAll(encoladosCache.values());
 
         // Inicialización de personas
-        Persona persona1 = new Persona("Juan Pérez", "1234567890", 35, "Masculino", "Bogotá", "Medellín", "asd", false, "Policía Nacional", true, true, false, "Ninguna", "Activo", true,"2000_10_03");
-        Persona persona2 = new Persona("María García", "9876543210", 42, "Femenino", "Cali", "Bogotá", "dsa", true, "INPEC", false, false, true, "Advertencia", "Retirado", false,"2000_10_05");
-        Persona persona3 = new Persona("Pedro Sánchez", "1122334455", 50, "Masculino", "Barranquilla", "Cartagena", "asd", false, "Ejército Nacional", true, true, false, "Ninguna", "Activo", true,"2000_10_01");
-        Persona persona4 = new Persona("Laura Martínez", "5566778899", 28, "Femenino", "Bucaramanga", "Cúcuta", "false", false, "Fiscalía General", false, false, true, "Ninguna", "Activo", false,"2000_10_10");
-        Persona persona5 = new Persona("Carlos Hernández", "2233445566", 45, "Masculino", "Santa Marta", "Medellín", "true", false, "Policía Nacional", true, true, false, "Ninguna", "Activo", true,"2000_10_23");
-        Persona persona6 = new Persona("Andrea Gómez", "7788990011", 32, "Femenino", "Pereira", "Manizales", "less", false, "Defensoría del Pueblo", false, false, false, "Advertencia", "Activo", false, "2000_10_05");
-        Persona persona7 = new Persona("Javier Rodríguez", "1122558899", 39, "Masculino", "Cali", "Palmira", "more", false, "Ejército Nacional", true, true, false, "Ninguna", "Activo", true,"2000_10_09");
-        Persona persona8 = new Persona("Claudia Ramírez", "3344556677", 53, "Femenino", "Neiva", "Ibagué", "catch", true, "INPEC", false, false, true, "Ninguna", "Retirado", false,"2000_10_13");
-        Persona persona9 = new Persona("Luis Fernández", "9988776655", 41, "Masculino", "Medellín", "Bogotá", "try", false, "Policía Nacional", true, true, false, "Advertencia", "Activo", true,"2000_10_29");
-        Persona persona10 = new Persona("Sofía Méndez", "5566443322", 29, "Femenino", "Cartagena", "Barranquilla", "nose", false, "Fiscalía General", false, false, true, "Ninguna", "Activo",false,"2000_10_04");
-        encolados.addAll(List.of(new Persona[]{persona1, persona2, persona3,persona4,persona5
-                                                ,persona6,persona7,persona8,persona9,persona10}));
+//        Persona persona1 = new Persona("Juan Pérez", "1234567890", 35, "Masculino", "Bogotá", "Medellín", "asd", false, "Policía Nacional", true, true, false, "Ninguna", "Activo", true,"2000_10_03",100);
+//        Persona persona2 = new Persona("María García", "9876543210", 42, "Femenino", "Cali", "Bogotá", "dsa", true, "INPEC", false, false, true, "Advertencia", "Retirado", false,"2000_10_05",200);
+//        Persona persona3 = new Persona("Pedro Sánchez", "1122334455", 50, "Masculino", "Barranquilla", "Cartagena", "asd", false, "Ejército Nacional", true, true, false, "Ninguna", "Activo", true,"2000_10_01",300);
+//        Persona persona4 = new Persona("Laura Martínez", "5566778899", 28, "Femenino", "Bucaramanga", "Cúcuta", "false", false, "Fiscalía General", false, false, true, "Ninguna", "Activo", false,"2000_10_10",400);
+//        Persona persona5 = new Persona("Carlos Hernández", "2233445566", 45, "Masculino", "Santa Marta", "Medellín", "true", false, "Policía Nacional", true, true, false, "Ninguna", "Activo", true,"2000_10_23",500);
+//        Persona persona6 = new Persona("Andrea Gómez", "7788990011", 32, "Femenino", "Pereira", "Manizales", "less", false, "Defensoría del Pueblo", false, false, false, "Advertencia", "Activo", false, "2000_10_05",400);
+//        Persona persona7 = new Persona("Javier Rodríguez", "1122558899", 39, "Masculino", "Cali", "Palmira", "more", false, "Ejército Nacional", true, true, false, "Ninguna", "Activo", true,"2000_10_09",300);
+//        Persona persona8 = new Persona("Claudia Ramírez", "3344556677", 53, "Femenino", "Neiva", "Ibagué", "catch", true, "INPEC", false, false, true, "Ninguna", "Retirado", false,"2000_10_13",200);
+//        Persona persona9 = new Persona("Luis Fernández", "9988776655", 41, "Masculino", "Medellín", "Bogotá", "try", false, "Policía Nacional", true, true, false, "Advertencia", "Activo", true,"2000_10_29",100);
+//        Persona persona10 = new Persona("Sofía Méndez", "5566443322", 29, "Femenino", "Cartagena", "Barranquilla", "nose", false, "Fiscalía General", false, false, true, "Ninguna", "Activo",false,"2000_10_04",200);
+//        encolados.addAll(List.of(new Persona[]{persona1, persona2, persona3,persona4,persona5
+//                                                ,persona6,persona7,persona8,persona9,persona10}));
+
        procesarEncolados(encolados);
        moverCaracterizaciones();
        comprimirCarpeta();

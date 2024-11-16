@@ -18,7 +18,8 @@ public class EscritorArchivosUtil {
         File direccio = new File(rutaArchivo);
         if (!direccio.exists()){
             String [] direcciones =rutaArchivo.split("/");
-            nuevoCSV(rutaArchivo, direcciones[direcciones.length-1], persona.getClass());
+            String directorio = (String) rutaArchivo.subSequence(0,rutaArchivo.length()-direcciones[direcciones.length-1].length());
+            nuevoCSV(directorio, direcciones[direcciones.length-1], persona.getClass());
         }
         try(BufferedWriter escritor = new BufferedWriter(new FileWriter(rutaArchivo, true))
 
@@ -39,11 +40,11 @@ public class EscritorArchivosUtil {
 
     public static void nuevoCSV(String ruta, String nombreArchivo, Class persona) throws IOException {
         Field[] atributos = persona.getDeclaredFields();
-        String atributosCSV =atributos[0]+"";
+        String atributosCSV =atributos[0].getName()+"";
         for (int i=1; i< atributos.length;i++){
-            atributosCSV = atributosCSV+";;"+atributos[i];
+            atributosCSV = atributosCSV+";;"+atributos[i].getName();
         }
-
+        System.out.println(atributosCSV);
         File archivo = new File(ruta, nombreArchivo);
         try { // Crea los directorios si no existen
             archivo.getParentFile().mkdirs();

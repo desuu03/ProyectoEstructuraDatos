@@ -8,14 +8,15 @@ public class Fecha {
         int anio = localDate.getYear();
         int mes = localDate.getMonthValue();
         int dia = localDate.getDayOfMonth();
+        System.out.println(anio+"_"+mes+"_"+dia);
         return anio+"_"+mes+"_"+dia;
     }
     public static String fechaDiaAnterior(){
-        LocalDate localDate = LocalDate.now();
-        localDate.minusDays(1);
+        LocalDate localDate = LocalDate.now().minusDays(1);
         int anio = localDate.getYear();
         int mes = localDate.getMonthValue();
         int dia = localDate.getDayOfMonth();
+        System.out.println(anio+"_"+mes+"_"+dia);
         return anio+"_"+mes+"_"+dia;
     }
 }

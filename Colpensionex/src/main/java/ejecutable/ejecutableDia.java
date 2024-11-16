@@ -7,6 +7,7 @@ import model.Persona;
 import util.EscritorArchivosUtil;
 import util.Fecha;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,23 +22,23 @@ import java.util.zip.*;
 
 public class ejecutableDia {
     public static void main(String[] args) throws IOException {
-       HashMap<String, Persona> encoladosCache = encoladosCache();
+       //HashMap<String, Persona> encoladosCache = encoladosCache();
        PriorityQueue<Persona> encolados = new PriorityQueue<>();
-       encolados.addAll(encoladosCache.values());
+       //encolados.addAll(encoladosCache.values());
 
         // Inicialización de personas
-//        Persona persona1 = new Persona("Juan Pérez", "1234567890", 35, "Masculino", "Bogotá", "Medellín", "asd", false, "Policía Nacional", true, true, false, "Ninguna", "Activo", true,"2000_10_03");
-//        Persona persona2 = new Persona("María García", "9876543210", 42, "Femenino", "Cali", "Bogotá", "dsa", true, "INPEC", false, false, true, "Advertencia", "Retirado", false,"2000_10_05");
-//        Persona persona3 = new Persona("Pedro Sánchez", "1122334455", 50, "Masculino", "Barranquilla", "Cartagena", "asd", false, "Ejército Nacional", true, true, false, "Ninguna", "Activo", true,"2000_10_01");
-//        Persona persona4 = new Persona("Laura Martínez", "5566778899", 28, "Femenino", "Bucaramanga", "Cúcuta", "false", false, "Fiscalía General", false, false, true, "Ninguna", "Activo", false,"2000_10_10");
-//        Persona persona5 = new Persona("Carlos Hernández", "2233445566", 45, "Masculino", "Santa Marta", "Medellín", "true", false, "Policía Nacional", true, true, false, "Ninguna", "Activo", true,"2000_10_23");
-//        Persona persona6 = new Persona("Andrea Gómez", "7788990011", 32, "Femenino", "Pereira", "Manizales", "less", false, "Defensoría del Pueblo", false, false, false, "Advertencia", "Activo", false, "2000_10_05");
-//        Persona persona7 = new Persona("Javier Rodríguez", "1122558899", 39, "Masculino", "Cali", "Palmira", "more", false, "Ejército Nacional", true, true, false, "Ninguna", "Activo", true,"2000_10_09");
-//        Persona persona8 = new Persona("Claudia Ramírez", "3344556677", 53, "Femenino", "Neiva", "Ibagué", "catch", true, "INPEC", false, false, true, "Ninguna", "Retirado", false,"2000_10_13");
-//        Persona persona9 = new Persona("Luis Fernández", "9988776655", 41, "Masculino", "Medellín", "Bogotá", "try", false, "Policía Nacional", true, true, false, "Advertencia", "Activo", true,"2000_10_29");
-//        Persona persona10 = new Persona("Sofía Méndez", "5566443322", 29, "Femenino", "Cartagena", "Barranquilla", "nose", false, "Fiscalía General", false, false, true, "Ninguna", "Activo",false,"2000_10_04");
-//        encolados.addAll(List.of(new Persona[]{persona1, persona2, persona3,persona4,persona5
-//                                                ,persona6,persona7,persona8,persona9,persona10}));
+        Persona persona1 = new Persona("Juan Pérez", "1234567890", 35, "Masculino", "Bogotá", "Medellín", "asd", false, "Policía Nacional", true, true, false, "Ninguna", "Activo", true,"2000_10_03");
+        Persona persona2 = new Persona("María García", "9876543210", 42, "Femenino", "Cali", "Bogotá", "dsa", true, "INPEC", false, false, true, "Advertencia", "Retirado", false,"2000_10_05");
+        Persona persona3 = new Persona("Pedro Sánchez", "1122334455", 50, "Masculino", "Barranquilla", "Cartagena", "asd", false, "Ejército Nacional", true, true, false, "Ninguna", "Activo", true,"2000_10_01");
+        Persona persona4 = new Persona("Laura Martínez", "5566778899", 28, "Femenino", "Bucaramanga", "Cúcuta", "false", false, "Fiscalía General", false, false, true, "Ninguna", "Activo", false,"2000_10_10");
+        Persona persona5 = new Persona("Carlos Hernández", "2233445566", 45, "Masculino", "Santa Marta", "Medellín", "true", false, "Policía Nacional", true, true, false, "Ninguna", "Activo", true,"2000_10_23");
+        Persona persona6 = new Persona("Andrea Gómez", "7788990011", 32, "Femenino", "Pereira", "Manizales", "less", false, "Defensoría del Pueblo", false, false, false, "Advertencia", "Activo", false, "2000_10_05");
+        Persona persona7 = new Persona("Javier Rodríguez", "1122558899", 39, "Masculino", "Cali", "Palmira", "more", false, "Ejército Nacional", true, true, false, "Ninguna", "Activo", true,"2000_10_09");
+        Persona persona8 = new Persona("Claudia Ramírez", "3344556677", 53, "Femenino", "Neiva", "Ibagué", "catch", true, "INPEC", false, false, true, "Ninguna", "Retirado", false,"2000_10_13");
+        Persona persona9 = new Persona("Luis Fernández", "9988776655", 41, "Masculino", "Medellín", "Bogotá", "try", false, "Policía Nacional", true, true, false, "Advertencia", "Activo", true,"2000_10_29");
+        Persona persona10 = new Persona("Sofía Méndez", "5566443322", 29, "Femenino", "Cartagena", "Barranquilla", "nose", false, "Fiscalía General", false, false, true, "Ninguna", "Activo",false,"2000_10_04");
+        encolados.addAll(List.of(new Persona[]{persona1, persona2, persona3,persona4,persona5
+                                                ,persona6,persona7,persona8,persona9,persona10}));
        procesarEncolados(encolados);
        moverCaracterizaciones();
        comprimirCarpeta();
@@ -47,21 +48,22 @@ public class ejecutableDia {
         LinkedList<Persona> encoladosProcesadosDia = new LinkedList<>();
 
         int aceptados =0;
+        String fechaActual = Fecha.fechaActual();
         while(encolados.size()!=0 && aceptados!=100){
             Persona personaAux = encolados.poll();
             personaAux.setEstado("Aceptado");
-            personaAux.setFechaModifacion(Fecha.fechaActual());
+            personaAux.setFechaModifacion(fechaActual);
             encoladosProcesadosDia.add(personaAux);
             EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Cotizantes",personaAux);
             //System.out.println(personaAux.getNombre()+", edad > "+personaAux.getEdad()+", declararRenta > "+personaAux.isObligadoDeclararRenta());
             aceptados++;
         }
-        EscritorArchivosUtil.escribirTodasPersonas(encoladosProcesadosDia, "empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/solicitantesAceptados");
+        EscritorArchivosUtil.escribirTodasPersonas(encoladosProcesadosDia, "empleado/Diario/SolicitudesProcesadas_"+fechaActual+"/solicitantesAceptados");
     }
 
     public static HashMap<String, Persona> encoladosCache () throws IOException {
         // Cargar encolados
-        PersonaDao encoladosDao = new PersonaDao("src/main/java/recursos/encolados");
+        PersonaDao encoladosDao = new PersonaDao("empleado/Base de datos/Encolados");
         List<Persona> encolados = encoladosDao.obtenerTodos();
         HashMap<String, Persona> encoladosCache = new HashMap<>();
         for (Persona encolado : encolados){
@@ -70,10 +72,17 @@ public class ejecutableDia {
         return encoladosCache;
     }
 
-    public static void moverCaracterizaciones(){
+    public static void moverCaracterizaciones() {
         Path carpetaOrigen = Paths.get("empleado/Caracterizaciones Entrantes");
         Path carpetaDestino = Paths.get("src/main/java/recursos/CaracterizacionesEnProceso");
-
+        File directorioOrigen = new File(String.valueOf(carpetaOrigen));
+        File directorioDestino = new File(String.valueOf(carpetaDestino));
+        if(!directorioOrigen.exists()){
+            directorioOrigen.mkdirs();
+        }
+        if(!directorioDestino.exists()){
+            directorioDestino.mkdirs();
+        }
         try {
             // Obtener todos los archivos de la carpeta de origen
             DirectoryStream<Path> stream = Files.newDirectoryStream(carpetaOrigen);
@@ -94,17 +103,22 @@ public class ejecutableDia {
     }
 
     public static void comprimirCarpeta (){
-        Path carpetaOrigen = Paths.get("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaDiaAnterior());
-        Path carpetaZip = Paths.get("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaDiaAnterior()+".zip");
+        String fechaDiaAnterior = Fecha.fechaDiaAnterior();
+        Path carpetaOrigen = Paths.get("empleado/Diario/SolicitudesProcesadas_"+fechaDiaAnterior);
+        Path carpetaZip = Paths.get("empleado/Diario/SolicitudesProcesadas_"+fechaDiaAnterior+".zip");
 
         try {
-            // Crear un flujo de salida para el archivo ZIP
-            try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(carpetaZip.toFile()))) {
+            if(new File(String.valueOf(carpetaOrigen)).exists()) {
+                // Crear un flujo de salida para el archivo ZIP
+                try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(carpetaZip.toFile()))) {
 
-                // Comprimir la carpeta de origen
-                comprimirCarpeta(carpetaOrigen, zos, carpetaOrigen);
+                    // Comprimir la carpeta de origen
+                    comprimirCarpeta(carpetaOrigen, zos, carpetaOrigen);
 
-                System.out.println("Carpeta comprimida correctamente.");
+                    System.out.println("Carpeta comprimida correctamente.");
+                }
+            }else{
+                System.out.println("No existe la carpeta a comprimir");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -112,7 +126,6 @@ public class ejecutableDia {
 
     }
     private static void comprimirCarpeta(Path carpetaOrigen, ZipOutputStream zos, Path carpetaRaiz) throws IOException {
-        //Definiendo las direcciones de origen y destino, ademas del flujo de datos del ZIP (el ZipOutputStream)
 
         // Obtener la lista de archivos y carpetas en la carpeta de origen
         DirectoryStream<Path> stream = Files.newDirectoryStream(carpetaOrigen);

@@ -99,6 +99,7 @@ public class GestorDeEntidad {
                 //VALIDACION DE QUE SI ESTEN BIEN LOS FORMATOS
                 if(linea.length == claseEntidad.getDeclaredFields().length) {
 
+                    //
                     for (Map.Entry<Integer, String> itemMapa : this.mapeoColumnas.entrySet()) {
 
                         Field atributo = claseEntidad.getDeclaredField(itemMapa.getValue());

@@ -35,8 +35,6 @@ public class ejecutableHora {
         inhabilitadosCache = inhabilitadosCache();
         solicitudesCache = solicitudesCache();
 
-
-
     }
 
     private static HashMap<String, Caracterizado> caracterizacionFiscaliaCache () throws IOException {
@@ -144,6 +142,27 @@ public class ejecutableHora {
         }
     }
 
+    public static void procesarSolicitante(Persona solicitante) throws IOException {
+        procesarPorCaracterizacion(solicitante);
+        if(solicitante.getEstado().equalsIgnoreCase("Inhabilitado") ||
+                solicitante.getEstado().equalsIgnoreCase("Embargado")){
+            System.out.println("Ya fue pasado a lista");
+            return;
+        }else{
+            boolean aceptado= procesarPorColpensionex(solicitante);
+            if(aceptado){
+                solicitante.setEstado("Encolado");
+                EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Encolados",solicitante);
+                EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Encolados",solicitante);
+            }else{
+                EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Rechazados",solicitante);
+                EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Rechazados",solicitante);
+            }
+        }
+
+
+    }
+
     public static void procesarPorCaracterizacion (Persona solicitante) throws IOException {
         if(caracterizadosFiscaliaCache.containsKey(solicitante.getCedula())){
             String tipoCaracterizacio = caracterizadosFiscaliaCache.get(solicitante.getCedula()).getCaracterizacion();
@@ -194,7 +213,8 @@ public class ejecutableHora {
 
     private static boolean procesarPorColpensionex(Persona solicitante) throws IOException {
         String cedulaSolicitante = solicitante.getCedula();
-        if(cotizantesCache().containsKey(cedulaSolicitante)){
+        if(solicitante.getEstado().equalsIgnoreCase("Inhabilitado") || cotizantesCache().containsKey(cedulaSolicitante)
+            || solicitante.getEstado().equalsIgnoreCase("Embargado")){
             return false;
         }
         if(inhabilitadosCache.containsKey(cedulaSolicitante)){
@@ -234,6 +254,9 @@ public class ejecutableHora {
                 return false;
             }
             String entidadAnterior = solicitante.getEntidadAnterior();
+            //
+            //VER LO DE SEMANAS
+            //
             if(entidadAnterior.equalsIgnoreCase("Provenir")){
 
             }
@@ -274,14 +297,22 @@ public class ejecutableHora {
                 if(solicitante.getObservacionesDisciplinarias().equalsIgnoreCase("Ninguna")){
                     return true;
                 }
+                ////
+                ////ALGO DE RECHAZAR
+                ////
+                return false;
 
             }
             if(institucionPublica.equalsIgnoreCase("Mininterior")){
-
+                if(solicitante.getObservacionesDisciplinarias().equalsIgnoreCase("Ninguna")){
+                    return true;
+                }
+                ////
+                ////ALGO DE RECHAZAR
+                ////
+                return false;
             }
         }
-
-
       return false;
     }
 

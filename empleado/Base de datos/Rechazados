@@ -1,0 +1,6 @@
+nombre;;cedula;;edad;;genero;;lugarNacimiento;;lugarResidencia;;institucionPublica;;prepensionado;;entidadAnterior;;semanasEntidadEnterior;;hijosINPEC;;condecorado;;familiaresPolicias;;observacionesDisciplinarias;;estado;;fechaModifacion;;obligadoDeclararRenta
+Sofía Méndez;;;;5566443322;;29;;Femenino;;Cartagena;;Barranquilla;;Fiscalía General;;false;;Fiscalía General;;95;;false;;false;;true;;Ninguna;;Rechazado;;2024_11_16;;false
+Luis Fernández;;;;9988776655;;41;;Masculino;;Medellín;;Bogotá;;Policía Nacional;;false;;Policía Nacional;;170;;true;;true;;false;;Advertencia;;Rechazado;;2024_11_16;;true
+Javier Rodríguez;;;;1122558899;;39;;Masculino;;Cali;;Palmira;;Ejército Nacional;;false;;Ejército Nacional;;110;;true;;true;;false;;Ninguna;;Rechazado;;2024_11_16;;true
+Andrea Gómez;;;;7788990011;;32;;Femenino;;Pereira;;Manizales;;Defensoría del Pueblo;;false;;Defensoría del Pueblo;;90;;false;;false;;false;;Advertencia;;Rechazado;;2024_11_16;;false
+Claudia Ramírez;;;;3344556677;;53;;Femenino;;Neiva;;Ibagué;;INPEC;;true;;INPEC;;130;;false;;false;;true;;Ninguna;;Rechazado;;2024_11_16;;false

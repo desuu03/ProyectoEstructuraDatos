@@ -1,0 +1,4 @@
+nombre;;cedula;;edad;;genero;;lugarNacimiento;;lugarResidencia;;institucionPublica;;prepensionado;;entidadAnterior;;semanasEntidadEnterior;;hijosINPEC;;condecorado;;familiaresPolicias;;observacionesDisciplinarias;;estado;;fechaModifacion;;obligadoDeclararRenta
+Laura Martínez;;;;5566778899;;28;;Femenino;;Bucaramanga;;Cúcuta;;Fiscalía General;;false;;Fiscalía General;;80;;false;;false;;true;;Ninguna;;Inhabilitado;;2024_11_16;;false
+Juan Pérez;;;;1234567890;;35;;Masculino;;Bogotá;;Medellín;;Policía Nacional;;false;;Ejército Nacional;;100;;true;;true;;false;;Ninguna;;Inhabilitado;;2024_11_16;;true
+Carlos Hernández;;;;2233445566;;45;;Masculino;;Santa Marta;;Medellín;;Policía Nacional;;false;;Policía Nacional;;200;;true;;true;;false;;Ninguna;;Inhabilitado;;2024_11_16;;true

@@ -1,9 +1,13 @@
 package util;
 
+import model.Persona;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
+
+import static util.EscritorArchivosUtil.nuevoCSV;
 
 public class LectorArchivosUtil {
 
@@ -14,17 +18,24 @@ public class LectorArchivosUtil {
         throws IOException
     {
         File archivo = new File(rutaArchivo);
+        if(archivo.exists()) {
+            try (BufferedReader lector = new BufferedReader(
+                    new InputStreamReader(new FileInputStream(archivo), StandardCharsets.UTF_8))
+            ) {
+                String primeraLinea = lector.readLine();
 
-        try(BufferedReader lector = new BufferedReader(
-                new InputStreamReader(new FileInputStream(archivo), StandardCharsets.UTF_8))
-        ) {
-            String primeraLinea = lector.readLine();
+                if (primeraLinea != null) {
+                    return primeraLinea.split(LectorArchivosUtil.SEPARADOR_CSV);
+                }
+            }catch (Exception e){
 
-            if(primeraLinea != null) {
-                return primeraLinea.split(LectorArchivosUtil.SEPARADOR_CSV);
             }
+        }else{
+            Fecha.guardarRegistroLog("el archivo a leer no existe con direccion : "+rutaArchivo,2, "NO EXISTE ARCHIVO");
+            String [] direcciones =rutaArchivo.split("/");
+            String directorio = (String) rutaArchivo.subSequence(0,rutaArchivo.length()-direcciones[direcciones.length-1].length());
+            nuevoCSV(directorio, direcciones[direcciones.length-1], new Persona().getClass());
         }
-
         return null;
     }
 
@@ -39,22 +50,25 @@ public class LectorArchivosUtil {
 
         File archivo = new File(rutaArchivo);
         LinkedList<String[]> lineas = new LinkedList<>();
+        if(archivo.exists()) {
+            try (BufferedReader lector = new BufferedReader(
+                    new InputStreamReader(new FileInputStream(archivo), StandardCharsets.UTF_8))
+            ) {
+                String linea;
+                boolean esPrimeraLinea = (esSaltarPrimera) ? true : false;
+                while ((linea = lector.readLine()) != null) {
 
-        try(BufferedReader lector = new BufferedReader(
-                new InputStreamReader(new FileInputStream(archivo), StandardCharsets.UTF_8))
-        ) {
-            String linea;
-            boolean esPrimeraLinea = (esSaltarPrimera) ? true: false;
-            while( (linea = lector.readLine()) != null  ) {
+                    if (esPrimeraLinea) {
+                        esPrimeraLinea = false;
+                        continue;
+                    }
 
-                if(esPrimeraLinea) {
-                    esPrimeraLinea = false;
-                    continue;
+                    String[] arreglo = linea.split(LectorArchivosUtil.SEPARADOR_CSV);
+                    lineas.add(arreglo);
                 }
-
-                String[] arreglo = linea.split(LectorArchivosUtil.SEPARADOR_CSV);
-                lineas.add( arreglo );
             }
+        }else {
+            throw new IOException("EL ARCHIVO NO EXISTE O EL DIRECCION INCORRECTA");
         }
 
         return lineas;

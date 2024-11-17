@@ -1,9 +1,12 @@
 package ejecutable;
+import com.github.javafaker.*;
+import com.github.javafaker.Country;
 import com.github.javafaker.Faker;
 import model.Persona;
 import util.EscritorArchivosUtil;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -13,18 +16,19 @@ import java.util.concurrent.Executors;
 public class diezMilArchivos {
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        int cantidadArchivos = 1;
+        int cantidadArchivos = 50;
         int cantidadPersonas = 100;
-        ExecutorService ejecutadorArchivos = Executors.newFixedThreadPool(10);
-        ExecutorService ejecutadorPersonas = Executors.newFixedThreadPool(5);
+        ExecutorService ejecutadorArchivos = Executors.newFixedThreadPool(3);
+        ExecutorService ejecutadorPersonas = Executors.newFixedThreadPool(12);
         CountDownLatch contadorArchivos = new CountDownLatch(cantidadArchivos);
-        CountDownLatch contadorPersonas = new CountDownLatch(cantidadPersonas);
+        double tiempoInicio = System.currentTimeMillis();
         String ruta = "empleado/Base de datos/Solicitudes/";
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < cantidadArchivos; i++) {
+            CountDownLatch contadorPersonas = new CountDownLatch(cantidadPersonas);
 
             int finalI = i+1;
             ejecutadorArchivos.execute(()-> {
-                System.out.println("Hilo "+finalI+"para archivo");
+                System.out.println("Escribiendo archivo CSV # "+finalI);
                 //proceso a hacer
                 String nombreArchivo = "csv"+ finalI;
                 try {
@@ -32,11 +36,11 @@ public class diezMilArchivos {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                for (int j = 0; j < 100; j++) {
+                for (int j = 0; j < cantidadPersonas; j++) {
 
                     int finalJ = j;
+
                     ejecutadorPersonas.execute(()-> {
-                        System.out.println("Hilo "+ finalJ +" para persona");
                         //proceso a hacer
                         try {
                             EscritorArchivosUtil.escribirPersona(ruta+ nombreArchivo,crearPersona());
@@ -52,27 +56,34 @@ public class diezMilArchivos {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                ejecutadorPersonas.shutdown();
                 contadorArchivos.countDown();
             });
 
         }
         contadorArchivos.await();
+        ejecutadorPersonas.shutdown();
         ejecutadorArchivos.shutdown();
+        System.out.println("Terminó el proceso, se crearon "+ cantidadArchivos+ " archivos con "+cantidadPersonas+" personas cada uno.");
+        double tiempoFin = System.currentTimeMillis();
+        double tiempoTotalMinutos = (tiempoFin - tiempoInicio) / (1000 * 60);
 
+        System.out.println("El proceso demoró " + tiempoTotalMinutos + " minutos.");
     }
 
 
     public static Persona crearPersona(){
-        com.github.javafaker.Faker faker = new com.github.javafaker.Faker(new Locale("es", "CO"));
+        Faker faker = new Faker(new Locale("es", "CO"));
 
         String nombre = faker.name().fullName();
         String cedula = faker.numerify("##########"); // Cédula de 10 dígitos
         int edad = faker.number().numberBetween(12, 90);
         String genero = faker.options().option("Masculino", "Femenino");
 
-        String lugarNacimiento = faker.address().country() + "-" + faker.address().state() + "-" + faker.address().city();
-        String lugarResidencia = faker.address().country() + "-" + faker.address().state() + "-" + faker.address().city();
+        Address nac= faker.address();
+        Address res = faker.address();
+
+        String lugarNacimiento = nac.country() + "-" + nac.state() + "-" + nac.city();
+        String lugarResidencia = res.country() + "-" + res.state() + "-" + res.city();
 
         String institucionPublica = faker.options().option("Mininterior", "Policía", "Minsalud", "INPEC", "Armada", "Civil");
         boolean prepensionado = faker.bool().bool();

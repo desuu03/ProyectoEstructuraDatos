@@ -133,7 +133,6 @@ public class GestorDeEntidad {
             }
         } catch (Exception e) {
             Fecha.guardarRegistroLog("ERROR EN NO SE DONDE",2,"ERROR");
-            throw new RuntimeException(e);
         }
 
         return entidades;

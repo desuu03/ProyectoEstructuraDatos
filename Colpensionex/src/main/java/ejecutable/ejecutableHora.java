@@ -34,6 +34,7 @@ public class ejecutableHora {
     static HashMap<String, Persona> solicitudesCache;
     static HashMap<String, Persona> rechazadosCache;
 
+    static HashMap<String, Persona> encoladosCache;
     public static void main(String[] args) throws IOException, InterruptedException {
         caracterizadosFiscaliaCache = caracterizacionFiscaliaCache();
         System.out.println("Cargo fiscalia");
@@ -47,6 +48,8 @@ public class ejecutableHora {
         System.out.println("Paso inhabilitados");
         rechazadosCache = rechazadosCache();
         System.out.println("Cargo rechazados");
+        encoladosCache = encoladosCache();
+        System.out.println("Cargo encolados");
         moverSolicitudes();
         System.out.println("Movio solicitudes");
         solicitudesCache = solicitudesCache();
@@ -64,6 +67,15 @@ public class ejecutableHora {
             rechazadosCache.put(rechazado.getCedula(),rechazado);
         }
         return rechazadosCache;
+    }
+    private static HashMap<String, Persona> encoladosCache() throws IOException {
+        PersonaDao encoladosDao = new PersonaDao("empleado/Base de datos/Encolados");
+        List<Persona> encolados = encoladosDao.obtenerTodos();
+        HashMap<String, Persona> encoladosCache = new HashMap<>();
+        for (Persona encolado : encolados){
+            encoladosCache.put(encolado.getCedula(),encolado);
+        }
+        return encoladosCache;
     }
 
     private static HashMap<String, Caracterizado> caracterizacionFiscaliaCache () throws IOException {
@@ -121,7 +133,6 @@ public class ejecutableHora {
     private static HashMap<String, Persona> solicitudesCache () throws IOException, InterruptedException {
 
         String rutaDirectorio = "Colpensionex\\src\\main\\java\\recursos\\SolicitudesEnProceso";
-        List<Persona> solicitudes = new ArrayList<>();
         HashMap<String, Persona> solicitudesCache = new HashMap<>();
         // Crea un objeto File para el directorio
         File directorio = new File(rutaDirectorio);
@@ -135,6 +146,7 @@ public class ejecutableHora {
                 CountDownLatch contador = new CountDownLatch(listaArchivos.length);
                 for (File archivo : listaArchivos) {
                     ejecutador.execute(()-> {
+                        List<Persona> solicitudes = new ArrayList<>();
                         //proceso a hacer
                         System.out.println("Hilo para el archivo : "+archivo.getName());
                         PersonaDao solicutdesDao = null;
@@ -147,8 +159,8 @@ public class ejecutableHora {
                         for (Persona solicitante : solicitudes) {
                             solicitudesCache.put(solicitante.getCedula(), solicitante);
                         }
+                        System.out.println("Cargo solicitantes del archivo : "+archivo.getName());
                         contador.countDown();
-
                     });
                 }
                 contador.await();
@@ -215,7 +227,7 @@ public class ejecutableHora {
         for (Map.Entry<String, Persona> entry : solicitudesCache.entrySet()) {
             ejecutador.execute(()-> {
                 //proceso a hacer
-                System.out.println("Hilo para el archivo : "+entry.getValue().getNombre());
+                System.out.println("Hilo para la persona : "+entry.getValue().getNombre());
                 try {
                     procesarSolicitante(entry.getValue());
                 } catch (IOException e) {
@@ -229,72 +241,95 @@ public class ejecutableHora {
     }
 
     public static void procesarSolicitante(Persona solicitante) throws IOException {
+        if (!procesarPreProceso(solicitante)) {
+            procesarPorCaracterizacion(solicitante);
+            if (solicitante.getEstado().equalsIgnoreCase("Inhabilitado") ||
+                    solicitante.getEstado().equalsIgnoreCase("Embargado")) {
+                System.out.println("Ya fue pasado a lista");
+                return;
+            } else {
 
-        procesarPorCaracterizacion(solicitante);
-        if(solicitante.getEstado().equalsIgnoreCase("Inhabilitado") ||
-                solicitante.getEstado().equalsIgnoreCase("Embargado")){
-            System.out.println("Ya fue pasado a lista");
-            return;
-        }else{
-
-            if(procesarPorColpensionex(solicitante)){
-                solicitante.setEstado("Encolado");
-                EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Encolados",solicitante);
-                EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Encolados",solicitante);
-            }else{
-                solicitante.setEstado("Rechazado");
-                EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Rechazados",solicitante);
-                EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Rechazados",solicitante);
+                if (procesarPorColpensionex(solicitante)) {
+                    solicitante.setEstado("Encolado");
+                    EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Encolados", solicitante);
+                    EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_" + Fecha.fechaActual() + "/Encolados", solicitante);
+                } else {
+                    if(!solicitante.getEstado().equalsIgnoreCase("INHABILITADO") &&
+                        !solicitante.getEstado().equalsIgnoreCase("RECHAZADO")) {
+                        solicitante.setEstado("Rechazado");
+                        EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Rechazados", solicitante);
+                        EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_" + Fecha.fechaActual() + "/Rechazados", solicitante);
+                    }
+                }
             }
+
         }
-
-
     }
 
-    private static void procesarPreProceso(Persona solicitante) throws IOException {
+    private static boolean procesarPreProceso(Persona solicitante) throws IOException {
         String estado = solicitante.getEstado();
         String cedula = solicitante.getCedula();
         if(estado.equalsIgnoreCase("APROBADO")){
             if (cotizantesCache.containsKey(cedula)) {
-                return;
+                return true;
             }
+            cotizantesCache.put(cedula,solicitante);
             EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Cotizantes",solicitante);
             EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Pre-Aprobados",solicitante);
-            return ;
+            return true;
         }
         if(estado.equalsIgnoreCase("RECHAZADO")){
             if(rechazadosCache.containsKey(cedula)){
-                return;
+                return true;
             }
+            rechazadosCache.put(cedula,solicitante);
             EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Rechazados",solicitante);
             EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Pre-Rechazados",solicitante);
-            return ;
+            return true;
+        }
+        if(estado.equalsIgnoreCase("EMBARGADO") ){
+            embargarSolicitante(solicitante);
         }
         if(estado.equalsIgnoreCase("INHABILITADO")){
             if(inhabilitadosCache.containsKey(cedula)){
-                return;
+                return false;
             }
-            inhabilitarSolicitante(solicitante);
+            if(solicitante.getFechaModifacion().isBlank() || solicitante.getFechaModifacion().isEmpty()
+                || solicitante.getFechaModifacion()==null){
+                solicitante.setFechaModifacion(Fecha.fechaActual());
+            }
+            EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Inhabilitados",solicitante);
+            EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Pre-Inhabilitados",solicitante);
+            return true;
         }
-        if(estado.equalsIgnoreCase("EMBARGADO")){
-            embargarSolicitante(solicitante);
-            return ;
-        }
+        return false;
     }
     public static void inhabilitarSolicitante(Persona solicitante)throws IOException{
+        inhabilitadosCache.put(solicitante.getCedula(),solicitante);
         solicitante.setEstado("Inhabilitado");
         solicitante.setFechaModifacion(Fecha.fechaActual());
         EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Inhabilitados",solicitante);
         EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Inhabilitados",solicitante);
     }
     public static void embargarSolicitante(Persona solicitante) throws IOException {
-        solicitante.setEstado("Embargado");
-        EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Encolados", solicitante);
-        EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Embargados",solicitante);
-        EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Embargados",solicitante);
+        if(!encoladosCache.containsKey(solicitante.getCedula())) {
+            solicitante.setEstado("Embargado");
+            EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Encolados", solicitante);
+            EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_" + Fecha.fechaActual() + "/Encolados", solicitante);
+            EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Embargados", solicitante);
+            EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_" + Fecha.fechaActual() + "/Embargados", solicitante);
+        }
+
     }
 
     public static void procesarPorCaracterizacion (Persona solicitante) throws IOException {
+        String estado= solicitante.getEstado();
+        if(estado.equalsIgnoreCase("INHABILITADO") ||
+            estado.equalsIgnoreCase("EMBARGADO") ||
+            estado.equalsIgnoreCase("RECHAZADO") ||
+            estado.equalsIgnoreCase("APROBADO")){
+            return;
+        }
         if(caracterizadosFiscaliaCache.containsKey(solicitante.getCedula())){
             String tipoCaracterizacio = caracterizadosFiscaliaCache.get(solicitante.getCedula()).getCaracterizacion();
             if(tipoCaracterizacio.equals("INHABILITAR")){
@@ -315,7 +350,7 @@ public class ejecutableHora {
             }
             return;
         }
-        if(caracterizacionContraloriaCache().containsKey(solicitante.getCedula())){
+        if(caraterizadosContraloriaCache.containsKey(solicitante.getCedula())){
             String tipoCaracterizacio = caracterizacionContraloriaCache().get(solicitante.getCedula()).getCaracterizacion();
             if(tipoCaracterizacio.equals("INHABILITAR")){
                 inhabilitarSolicitante(solicitante);
@@ -329,11 +364,14 @@ public class ejecutableHora {
 
     private static boolean procesarPorColpensionex(Persona solicitante) throws IOException {
         String cedulaSolicitante = solicitante.getCedula();
-        if(solicitante.getEstado().equalsIgnoreCase("Inhabilitado") || cotizantesCache().containsKey(cedulaSolicitante)
-            || solicitante.getEstado().equalsIgnoreCase("Embargado")){
+        String estado= solicitante.getEstado();
+        if(estado.equalsIgnoreCase("INHABILITADO") ||
+                estado.equalsIgnoreCase("EMBARGADO") ||
+                estado.equalsIgnoreCase("RECHAZADO") ||
+                estado.equalsIgnoreCase("APROBADO")){
             return false;
         }
-        if(inhabilitadosCache.containsKey(cedulaSolicitante)){
+        if(solicitante.getEstado().equalsIgnoreCase("INHABILITADO") && inhabilitadosCache.containsKey(cedulaSolicitante)){
             DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy_MM_dd");
             LocalDate fecha = LocalDate.parse(solicitante.getFechaModifacion(),formato);
             if(fecha.plusMonths(6).isBefore(LocalDate.now())){

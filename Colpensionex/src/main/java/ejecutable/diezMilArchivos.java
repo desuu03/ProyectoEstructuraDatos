@@ -4,6 +4,7 @@ import model.Persona;
 import util.EscritorArchivosUtil;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -84,9 +85,10 @@ public class diezMilArchivos {
         boolean familiaresPolicias = faker.bool().bool();
 
         String observacionesDisciplinarias = faker.options().option("Ninguna", "Faltas leves", "Sanción administrativa");
-        String estado = faker.options().option("RECHAZADO", "APROBADO", "INHABILITADO", "EMBARGADO");
+        String estado = faker.options().option("RECHAZADO", "APROBADO", "INHABILITADO", "EMBARGADO","GENERADO");
 
         String fechaModificacion = "";
+
         boolean obligadoDeclararRenta = faker.bool().bool();
 
         return new Persona(nombre, cedula, edad, genero, lugarNacimiento, lugarResidencia,

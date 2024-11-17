@@ -6,7 +6,11 @@ import model.Persona;
 import util.EscritorArchivosUtil;
 
 import java.io.IOException;
+<<<<<<< HEAD
 import java.time.LocalDateTime;
+=======
+import java.util.Date;
+>>>>>>> 7a0fc6060e7e401546a6aa71103fe5882c87739f
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -24,7 +28,10 @@ public class diezMilArchivos {
         double tiempoInicio = System.currentTimeMillis();
         String ruta = "empleado/Base de datos/Solicitudes/";
         for (int i = 0; i < cantidadArchivos; i++) {
+<<<<<<< HEAD
             CountDownLatch contadorPersonas = new CountDownLatch(cantidadPersonas);
+=======
+>>>>>>> 7a0fc6060e7e401546a6aa71103fe5882c87739f
 
             int finalI = i+1;
             ejecutadorArchivos.execute(()-> {
@@ -95,9 +102,10 @@ public class diezMilArchivos {
         boolean familiaresPolicias = faker.bool().bool();
 
         String observacionesDisciplinarias = faker.options().option("Ninguna", "Faltas leves", "Sanción administrativa");
-        String estado = faker.options().option("RECHAZADO", "APROBADO", "INHABILITADO", "EMBARGADO");
+        String estado = faker.options().option("RECHAZADO", "APROBADO", "INHABILITADO", "EMBARGADO","GENERADO");
 
         String fechaModificacion = "";
+
         boolean obligadoDeclararRenta = faker.bool().bool();
 
         return new Persona(nombre, cedula, edad, genero, lugarNacimiento, lugarResidencia,

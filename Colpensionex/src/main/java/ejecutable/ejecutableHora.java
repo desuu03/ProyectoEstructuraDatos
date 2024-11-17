@@ -32,6 +32,7 @@ public class ejecutableHora {
     static HashMap<String, Persona> cotizantesCache;
     static HashMap<String, Persona> inhabilitadosCache;
     static HashMap<String, Persona> solicitudesCache;
+    static HashMap<String, Persona> rechazadosCache;
 
     public static void main(String[] args) throws IOException, InterruptedException {
         caracterizadosFiscaliaCache = caracterizacionFiscaliaCache();
@@ -44,6 +45,8 @@ public class ejecutableHora {
         System.out.println("Cargo cotizantes");
         inhabilitadosCache = inhabilitadosCache();
         System.out.println("Paso inhabilitados");
+        rechazadosCache = rechazadosCache();
+        System.out.println("Cargo rechazados");
         moverSolicitudes();
         System.out.println("Movio solicitudes");
         solicitudesCache = solicitudesCache();
@@ -53,7 +56,15 @@ public class ejecutableHora {
 
 
     }
-
+    private static HashMap<String, Persona> rechazadosCache() throws IOException {
+        PersonaDao rechazadosDao = new PersonaDao("empleado/Base de datos/Rechazados");
+        List<Persona> rechazados = rechazadosDao.obtenerTodos();
+        HashMap<String, Persona> rechazadosCache = new HashMap<>();
+        for (Persona rechazado : rechazados){
+            rechazadosCache.put(rechazado.getCedula(),rechazado);
+        }
+        return rechazadosCache;
+    }
 
     private static HashMap<String, Caracterizado> caracterizacionFiscaliaCache () throws IOException {
         // Cargar caracterizados por fiscalia
@@ -218,6 +229,22 @@ public class ejecutableHora {
     }
 
     public static void procesarSolicitante(Persona solicitante) throws IOException {
+        if(solicitante.getEstado().equalsIgnoreCase("APROBADO")){
+            if (cotizantesCache.containsKey(solicitante.getCedula())) {
+                return;
+            }
+            EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Cotizantes",solicitante);
+            EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Pre-Aprobados",solicitante);
+            return ;
+        }
+        if(solicitante.getEstado().equalsIgnoreCase("RECHAZADO")){
+            if(rechazadosCache.containsKey(solicitante.getCedula())){
+                return;
+            }
+            EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Rechazados",solicitante);
+            EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Pre-Rechazados",solicitante);
+            return ;
+        }
         procesarPorCaracterizacion(solicitante);
         if(solicitante.getEstado().equalsIgnoreCase("Inhabilitado") ||
                 solicitante.getEstado().equalsIgnoreCase("Embargado")){

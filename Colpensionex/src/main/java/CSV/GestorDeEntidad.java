@@ -1,5 +1,6 @@
 package CSV;
 
+import util.Fecha;
 import util.LectorArchivosUtil;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -66,8 +67,12 @@ public class GestorDeEntidad {
         this.mapeoColumnas = new HashMap<>();
         String[] primeraLinea = LectorArchivosUtil.leerPrimeraLineaCsv(this.rutaArchivo);
 
-        for(int i = 0; i < primeraLinea.length; i++) {
-            this.mapeoColumnas.put(i, primeraLinea[i]);
+        if(primeraLinea!= null &&primeraLinea.length!=0) {
+            for (int i = 0; i < primeraLinea.length; i++) {
+                this.mapeoColumnas.put(i, primeraLinea[i]);
+            }
+        }else{
+            Fecha.guardarRegistroLog("el csv esta vacio, tiene ruta : "+rutaArchivo,2, "CSV vacio");
         }
     }
 
@@ -92,12 +97,12 @@ public class GestorDeEntidad {
 
         try {
             LinkedList<String[]> lineas = LectorArchivosUtil.leerTodasLasLineasCsv(this.rutaArchivo);
-
+            int indiceLinea = 0;
             for (String[] linea : lineas) {
                 ClaseEntidad instancia = claseEntidad.getDeclaredConstructor().newInstance();
 
                 //VALIDACION DE QUE SI ESTEN BIEN LOS FORMATOS
-
+                if(linea.length==claseEntidad.getDeclaredFields().length){
 
                     //
                     for (Map.Entry<Integer, String> itemMapa : this.mapeoColumnas.entrySet()) {
@@ -120,9 +125,14 @@ public class GestorDeEntidad {
                     }
 
                     entidades.add(instancia);
+                }else {
 
+                    Fecha.guardarRegistroLog("Columnas no equivalen a la cantidad de atributos",2,"Cedula : "+linea[1]);
+                }
+                indiceLinea++;
             }
         } catch (Exception e) {
+            Fecha.guardarRegistroLog("ERROR EN NO SE DONDE",2,"ERROR");
             throw new RuntimeException(e);
         }
 

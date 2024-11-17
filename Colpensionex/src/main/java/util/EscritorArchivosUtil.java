@@ -24,16 +24,20 @@ public class EscritorArchivosUtil {
         try(BufferedWriter escritor = new BufferedWriter(new FileWriter(rutaArchivo, true))
 
         ) {
-            String personaCSV = persona.getNombre()+";;"+persona.getCedula()+";;"+persona.getEdad()+";;"
-                                +persona.getGenero()+";;"+persona.getLugarNacimiento()+";;"+persona.getLugarResidencia()+";;"
-                                +persona.getInstitucionPublica()+";;"+persona.isPrepensionado()+";;"+persona.getEntidadAnterior()+";;"
-                                +persona.isHijosINPEC()+";;"+persona.isCondecorado()+";;"+persona.isFamiliaresPolicias()+";;"
-                                +persona.getInstitucionPublica()+";;"+persona.getEstado();
+            Field[] atributos = persona.getClass().getDeclaredFields();
+            atributos[0].setAccessible(true);
+            String personaCSV = atributos[0].get(persona)+";;";
+            for (int i = 1; i < persona.getClass().getDeclaredFields().length; i++) {
+                atributos[i].setAccessible(true);
+                personaCSV =personaCSV+";;"+atributos[i].get(persona);
+            }
 
             escritor.write(personaCSV);
             escritor.newLine();
         }catch (IOException e){
 
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
 
     }

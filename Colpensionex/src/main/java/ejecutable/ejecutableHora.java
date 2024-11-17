@@ -34,24 +34,30 @@ public class ejecutableHora {
     static HashMap<String, Persona> solicitudesCache;
 
     public static void main(String[] args) throws IOException, InterruptedException {
-
         caracterizadosFiscaliaCache = caracterizacionFiscaliaCache();
+        System.out.println("Cargo fiscalia");
         caraterizadosContraloriaCache = caracterizacionContraloriaCache();
+        System.out.println("Cargo contraloria");
         caracterizadosProcaduriaCache = caracterizacionProcaduriaCache();
+        System.out.println("Cargo procaduria");
         cotizantesCache = cotizantesCache();
+        System.out.println("Cargo cotizantes");
         inhabilitadosCache = inhabilitadosCache();
-
+        System.out.println("Paso inhabilitados");
         moverSolicitudes();
-
+        System.out.println("Movio solicitudes");
         solicitudesCache = solicitudesCache();
-
+        System.out.println("Cargo solicitantes");
+        procesarSolicitantes();
+        System.out.println("Proceso solicitantes");
 
 
     }
 
+
     private static HashMap<String, Caracterizado> caracterizacionFiscaliaCache () throws IOException {
         // Cargar caracterizados por fiscalia
-        CaracterizadoDao caracterizadoDao = new CaracterizadoDao("src/main/java/recursos/CaracterizacionesEnProceso/fiscalia");
+        CaracterizadoDao caracterizadoDao = new CaracterizadoDao("Colpensionex\\src\\main\\java\\recursos\\CaracterizacionesEnProceso\\fiscalia");
         List<Caracterizado> caracterizados = caracterizadoDao.obtenerTodos();
         HashMap<String, Caracterizado> caracterizadosCache = new HashMap<>();
         for (Caracterizado caracterizado : caracterizados){
@@ -61,7 +67,7 @@ public class ejecutableHora {
     }
     private static HashMap<String, Caracterizado> caracterizacionProcaduriaCache () throws IOException {
         // Cargar caracterizados por procaduria
-        CaracterizadoDao caracterizadoDao = new CaracterizadoDao("src/main/java/recursos/CaracterizacionesEnProceso/procaduria");
+        CaracterizadoDao caracterizadoDao = new CaracterizadoDao("Colpensionex\\src\\main\\java\\recursos\\CaracterizacionesEnProceso\\procaduria");
         List<Caracterizado> caracterizados = caracterizadoDao.obtenerTodos();
         HashMap<String, Caracterizado> caracterizadosCache = new HashMap<>();
         for (Caracterizado caracterizado : caracterizados){
@@ -71,7 +77,7 @@ public class ejecutableHora {
     }
     private static HashMap<String, Caracterizado> caracterizacionContraloriaCache () throws IOException {
         // Cargar caracterizados por contraloria
-        CaracterizadoDao caracterizadoDao = new CaracterizadoDao("src/main/java/recursos/CaracterizacionesEnProceso/contraloria");
+        CaracterizadoDao caracterizadoDao = new CaracterizadoDao("Colpensionex\\src\\main\\java\\recursos\\CaracterizacionesEnProceso\\contraluria");
         List<Caracterizado> caracterizados = caracterizadoDao.obtenerTodos();
         HashMap<String, Caracterizado> caracterizadosCache = new HashMap<>();
         for (Caracterizado caracterizado : caracterizados){
@@ -103,7 +109,7 @@ public class ejecutableHora {
 
     private static HashMap<String, Persona> solicitudesCache () throws IOException, InterruptedException {
 
-        String rutaDirectorio = "src/main/java/recursos/SolicitudesEnProceso";
+        String rutaDirectorio = "Colpensionex\\src\\main\\java\\recursos\\SolicitudesEnProceso";
         List<Persona> solicitudes = new ArrayList<>();
         HashMap<String, Persona> solicitudesCache = new HashMap<>();
         // Crea un objeto File para el directorio
@@ -147,7 +153,7 @@ public class ejecutableHora {
 
     private static void moverSolicitudes(){
         Path carpetaOrigen = Paths.get("empleado/Solicitudes Entrantes");
-        Path carpetaDestino = Paths.get("src/main/java/recursos/SolicitudesEnProceso");
+        Path carpetaDestino = Paths.get("Colpensionex\\src\\main\\java\\recursos\\SolicitudesEnProceso");
         File directorioOrigen = new File(String.valueOf(carpetaOrigen));
         File directorioDestino = new File(String.valueOf(carpetaDestino));
         if(!directorioOrigen.exists()){
@@ -159,9 +165,11 @@ public class ejecutableHora {
         try {
             // Obtener todos los archivos de la carpeta de origen
             DirectoryStream<Path> stream = Files.newDirectoryStream(carpetaOrigen);
+            // Lista todos los archivos en el directorio
+            File[] listaArchivos = directorioOrigen.listFiles();
 
             ExecutorService ejecutador = Executors.newFixedThreadPool(10);
-            CountDownLatch contador = new CountDownLatch(solicitudesCache.size());
+            CountDownLatch contador = new CountDownLatch(listaArchivos.length);
             // Iterar sobre cada archivo en la carpeta de origen
             for (Path archivo : stream) {
                 ejecutador.execute(()-> {
@@ -190,7 +198,7 @@ public class ejecutableHora {
         }
     }
 
-    public static void procesarSolicitante () throws InterruptedException {
+    public static void procesarSolicitantes () throws InterruptedException {
         ExecutorService ejecutador = Executors.newFixedThreadPool(10);
         CountDownLatch contador = new CountDownLatch(solicitudesCache.size());
         for (Map.Entry<String, Persona> entry : solicitudesCache.entrySet()) {
@@ -238,7 +246,7 @@ public class ejecutableHora {
     }
     public static void embargarSolicitante(Persona solicitante) throws IOException {
         solicitante.setEstado("Embargado");
-        EscritorArchivosUtil.escribirPersona("src/main/java/recursos/encolados", solicitante);
+        EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Encolados", solicitante);
         EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Embargados",solicitante);
         EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Embargados",solicitante);
     }
@@ -252,6 +260,7 @@ public class ejecutableHora {
             if(tipoCaracterizacio.equals("EMBARGAR")){
                embargarSolicitante(solicitante);
             }
+            return;
         }
         if(caracterizadosProcaduriaCache.containsKey(solicitante.getCedula())){
             String tipoCaracterizacio = caracterizadosProcaduriaCache.get(solicitante.getCedula()).getCaracterizacion();
@@ -261,6 +270,7 @@ public class ejecutableHora {
             if(tipoCaracterizacio.equals("EMBARGAR")){
                 embargarSolicitante(solicitante);
             }
+            return;
         }
         if(caracterizacionContraloriaCache().containsKey(solicitante.getCedula())){
             String tipoCaracterizacio = caracterizacionContraloriaCache().get(solicitante.getCedula()).getCaracterizacion();
@@ -270,6 +280,7 @@ public class ejecutableHora {
             if(tipoCaracterizacio.equals("EMBARGAR")){
                 embargarSolicitante(solicitante);
             }
+            return;
         }
     }
 

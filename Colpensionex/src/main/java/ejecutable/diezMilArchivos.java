@@ -21,7 +21,7 @@ public class diezMilArchivos {
         CountDownLatch contadorArchivos = new CountDownLatch(cantidadArchivos);
         CountDownLatch contadorPersonas = new CountDownLatch(cantidadPersonas);
         String ruta = "empleado/Base de datos/Solicitudes/";
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < cantidadArchivos; i++) {
 
             int finalI = i+1;
             ejecutadorArchivos.execute(()-> {
@@ -33,7 +33,7 @@ public class diezMilArchivos {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                for (int j = 0; j < 100; j++) {
+                for (int j = 0; j < cantidadPersonas; j++) {
 
                     int finalJ = j;
                     ejecutadorPersonas.execute(()-> {

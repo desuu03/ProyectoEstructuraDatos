@@ -12,24 +12,39 @@ import java.util.concurrent.Executors;
 
 public class diezMilArchivos {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         ExecutorService ejecutadorArchivos = Executors.newFixedThreadPool(10);
-        ExecutorService ejecutadorPersonas = Executors.newFixedThreadPool(10);
-        String ruta = "empleado/Base de datos/Rechazados"
-        for (int i = 0; i < 10000; i++) {
+        ExecutorService ejecutadorPersonas = Executors.newFixedThreadPool(5);
+        String ruta = "empleado/Base de datos/Solicitudes/";
+        for (int i = 0; i < 1; i++) {
 
-        }
-        CountDownLatch contador = new CountDownLatch();
-        for (Map.Entry<String, Persona> entry : solicitudesCache.entrySet()) {
-            ejecutador.execute(()-> {
+            int finalI = i+1;
+            ejecutadorArchivos.execute(()-> {
                 //proceso a hacer
-                EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Rechazados",solicitante);
+                String nombreArchivo = "csv"+ finalI;
+                try {
+                    EscritorArchivosUtil.nuevoCSV(ruta, nombreArchivo, Persona.class);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                for (int j = 0; j < 100; j++) {
 
-                contador.countDown();
+                    ejecutadorPersonas.execute(()-> {
+                        //proceso a hacer
+                        try {
+                            EscritorArchivosUtil.escribirPersona(ruta+ nombreArchivo,crearPersona());
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                    });
+
+                }
+
             });
+
         }
-        contador.await();
-        ejecutador.shutdown();
+
     }
 
 

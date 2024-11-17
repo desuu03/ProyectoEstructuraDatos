@@ -26,7 +26,7 @@ public class EscritorArchivosUtil {
         ) {
             Field[] atributos = persona.getClass().getDeclaredFields();
             atributos[0].setAccessible(true);
-            String personaCSV = atributos[0].get(persona)+";;";
+            String personaCSV = atributos[0].get(persona)+"";
             for (int i = 1; i < persona.getClass().getDeclaredFields().length; i++) {
                 atributos[i].setAccessible(true);
                 personaCSV =personaCSV+";;"+atributos[i].get(persona);

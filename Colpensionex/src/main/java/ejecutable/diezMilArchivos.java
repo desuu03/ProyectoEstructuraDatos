@@ -12,14 +12,19 @@ import java.util.concurrent.Executors;
 
 public class diezMilArchivos {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        int cantidadArchivos = 1;
+        int cantidadPersonas = 100;
         ExecutorService ejecutadorArchivos = Executors.newFixedThreadPool(10);
         ExecutorService ejecutadorPersonas = Executors.newFixedThreadPool(5);
+        CountDownLatch contadorArchivos = new CountDownLatch(cantidadArchivos);
+        CountDownLatch contadorPersonas = new CountDownLatch(cantidadPersonas);
         String ruta = "empleado/Base de datos/Solicitudes/";
         for (int i = 0; i < 1; i++) {
 
             int finalI = i+1;
             ejecutadorArchivos.execute(()-> {
+                System.out.println("Hilo "+finalI+"para archivo");
                 //proceso a hacer
                 String nombreArchivo = "csv"+ finalI;
                 try {
@@ -29,26 +34,36 @@ public class diezMilArchivos {
                 }
                 for (int j = 0; j < 100; j++) {
 
+                    int finalJ = j;
                     ejecutadorPersonas.execute(()-> {
+                        System.out.println("Hilo "+ finalJ +" para persona");
                         //proceso a hacer
                         try {
                             EscritorArchivosUtil.escribirPersona(ruta+ nombreArchivo,crearPersona());
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
-
+                        contadorPersonas.countDown();
                     });
 
                 }
-
+                try {
+                    contadorPersonas.await();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                ejecutadorPersonas.shutdown();
+                contadorArchivos.countDown();
             });
 
         }
+        contadorArchivos.await();
+        ejecutadorArchivos.shutdown();
 
     }
 
 
-    public static <Faker> Persona crearPersona(){
+    public static Persona crearPersona(){
         com.github.javafaker.Faker faker = new com.github.javafaker.Faker(new Locale("es", "CO"));
 
         String nombre = faker.name().fullName();

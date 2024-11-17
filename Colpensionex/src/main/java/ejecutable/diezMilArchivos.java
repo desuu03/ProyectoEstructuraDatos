@@ -48,8 +48,8 @@ public class diezMilArchivos {
     }
 
 
-    public static Persona crearPersona(){
-        Faker faker = new Faker(new Locale("es", "CO"));
+    public static <Faker> Persona crearPersona(){
+        com.github.javafaker.Faker faker = new com.github.javafaker.Faker(new Locale("es", "CO"));
 
         String nombre = faker.name().fullName();
         String cedula = faker.numerify("##########"); // Cédula de 10 dígitos

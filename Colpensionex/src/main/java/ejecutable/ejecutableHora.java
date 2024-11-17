@@ -229,22 +229,7 @@ public class ejecutableHora {
     }
 
     public static void procesarSolicitante(Persona solicitante) throws IOException {
-        if(solicitante.getEstado().equalsIgnoreCase("APROBADO")){
-            if (cotizantesCache.containsKey(solicitante.getCedula())) {
-                return;
-            }
-            EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Cotizantes",solicitante);
-            EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Pre-Aprobados",solicitante);
-            return ;
-        }
-        if(solicitante.getEstado().equalsIgnoreCase("RECHAZADO")){
-            if(rechazadosCache.containsKey(solicitante.getCedula())){
-                return;
-            }
-            EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Rechazados",solicitante);
-            EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Pre-Rechazados",solicitante);
-            return ;
-        }
+
         procesarPorCaracterizacion(solicitante);
         if(solicitante.getEstado().equalsIgnoreCase("Inhabilitado") ||
                 solicitante.getEstado().equalsIgnoreCase("Embargado")){
@@ -264,6 +249,37 @@ public class ejecutableHora {
         }
 
 
+    }
+
+    private static void procesarPreProceso(Persona solicitante) throws IOException {
+        String estado = solicitante.getEstado();
+        String cedula = solicitante.getCedula();
+        if(estado.equalsIgnoreCase("APROBADO")){
+            if (cotizantesCache.containsKey(cedula)) {
+                return;
+            }
+            EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Cotizantes",solicitante);
+            EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Pre-Aprobados",solicitante);
+            return ;
+        }
+        if(estado.equalsIgnoreCase("RECHAZADO")){
+            if(rechazadosCache.containsKey(cedula)){
+                return;
+            }
+            EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Rechazados",solicitante);
+            EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Pre-Rechazados",solicitante);
+            return ;
+        }
+        if(estado.equalsIgnoreCase("INHABILITADO")){
+            if(inhabilitadosCache.containsKey(cedula)){
+                return;
+            }
+            inhabilitarSolicitante(solicitante);
+        }
+        if(estado.equalsIgnoreCase("EMBARGADO")){
+            embargarSolicitante(solicitante);
+            return ;
+        }
     }
     public static void inhabilitarSolicitante(Persona solicitante)throws IOException{
         solicitante.setEstado("Inhabilitado");

@@ -269,19 +269,17 @@ public class ejecutableHora {
     private static boolean procesarPreProceso(Persona solicitante) throws IOException {
         String estado = solicitante.getEstado();
         String cedula = solicitante.getCedula();
+        if(cotizantesCache.containsKey(cedula) || rechazadosCache.containsKey(cedula) ||
+                inhabilitadosCache.containsKey(cedula) || encoladosCache.containsKey(cedula)){
+            return true;
+        }
         if(estado.equalsIgnoreCase("APROBADO")){
-            if (cotizantesCache.containsKey(cedula)) {
-                return true;
-            }
             cotizantesCache.put(cedula,solicitante);
             EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Cotizantes",solicitante);
             EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Pre-Aprobados",solicitante);
             return true;
         }
         if(estado.equalsIgnoreCase("RECHAZADO")){
-            if(rechazadosCache.containsKey(cedula)){
-                return true;
-            }
             rechazadosCache.put(cedula,solicitante);
             EscritorArchivosUtil.escribirPersona("empleado/Base de datos/Rechazados",solicitante);
             EscritorArchivosUtil.escribirPersona("empleado/Diario/SolicitudesProcesadas_"+Fecha.fechaActual()+"/Pre-Rechazados",solicitante);
@@ -291,9 +289,6 @@ public class ejecutableHora {
             embargarSolicitante(solicitante);
         }
         if(estado.equalsIgnoreCase("INHABILITADO")){
-            if(inhabilitadosCache.containsKey(cedula)){
-                return false;
-            }
             if(solicitante.getFechaModifacion().isBlank() || solicitante.getFechaModifacion().isEmpty()
                 || solicitante.getFechaModifacion()==null){
                 solicitante.setFechaModifacion(Fecha.fechaActual());
@@ -365,8 +360,7 @@ public class ejecutableHora {
     private static boolean procesarPorColpensionex(Persona solicitante) throws IOException {
         String cedulaSolicitante = solicitante.getCedula();
         String estado= solicitante.getEstado();
-        if(estado.equalsIgnoreCase("INHABILITADO") ||
-                estado.equalsIgnoreCase("EMBARGADO") ||
+        if(estado.equalsIgnoreCase("EMBARGADO") ||
                 estado.equalsIgnoreCase("RECHAZADO") ||
                 estado.equalsIgnoreCase("APROBADO")){
             return false;

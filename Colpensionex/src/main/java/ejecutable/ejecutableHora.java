@@ -156,6 +156,7 @@ public class ejecutableHora {
                             throw new RuntimeException(e);
                         }
                         solicitudes.addAll(solicutdesDao.obtenerTodos());
+                        archivo.deleteOnExit();
                         for (Persona solicitante : solicitudes) {
                             solicitudesCache.put(solicitante.getCedula(), solicitante);
                         }

@@ -2,6 +2,7 @@ package ejecutable;
 import com.github.javafaker.*;
 import com.github.javafaker.Country;
 import com.github.javafaker.Faker;
+import model.Caracterizado;
 import model.Persona;
 import util.EscritorArchivosUtil;
 
@@ -17,7 +18,7 @@ import java.util.concurrent.Executors;
 public class diezMilArchivos {
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        int cantidadArchivos = 50;
+        int cantidadArchivos = 1000;
         int cantidadPersonas = 100;
         ExecutorService ejecutadorArchivos = Executors.newFixedThreadPool(3);
         ExecutorService ejecutadorPersonas = Executors.newFixedThreadPool(12);
@@ -106,6 +107,18 @@ public class diezMilArchivos {
                 institucionPublica, prepensionado, entidadAnterior, semanasEntidadAnterior,
                 hijosINPEC, condecorado, familiaresPolicias, observacionesDisciplinarias,
                 estado, fechaModificacion, obligadoDeclararRenta);
+
+    }
+    public static Caracterizado crearCaracterizacion(){
+        Faker faker = new Faker(new Locale("es", "CO"));
+
+        String nombre = faker.name().fullName();
+        String tipoID = faker.options().option("Tarjeta Identidad","Cedula de ciudadania","Extrajera");
+        String cedula = faker.numerify("##########"); // Cédula de 10 dígitos
+
+        String caracterizacion = faker.options().option("INHABILITAR", "EMBARGAR");
+
+        return new Caracterizado(tipoID,cedula,nombre,caracterizacion);
 
     }
 }

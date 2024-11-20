@@ -136,6 +136,7 @@ public class ejecutableHora {
         HashMap<String, Persona> solicitudesCache = new HashMap<>();
         // Crea un objeto File para el directorio
         File directorio = new File(rutaDirectorio);
+        if(!directorio.exists()){directorio.mkdirs();}
         // Verifica si el directorio existe
         if (directorio.exists() && directorio.isDirectory()) {
             // Lista todos los archivos en el directorio

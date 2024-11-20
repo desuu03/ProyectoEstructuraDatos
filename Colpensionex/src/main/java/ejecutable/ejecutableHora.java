@@ -238,7 +238,6 @@ public class ejecutableHora {
                 contador.countDown();
             });
         }
-        contador.await();
         ejecutador.shutdown();
     }
 
